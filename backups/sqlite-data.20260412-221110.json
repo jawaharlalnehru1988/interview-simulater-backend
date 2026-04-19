@@ -1,0 +1,928 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$UoFFv0Zc6IdvQ9E7THhZVR$YCwMK4y+TnwIi7Iakl9DPVpMUHXYtBZMNTOuvVZa0vA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "demo1775993240",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T11:27:20.967Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$zBcUubXEXYnYRiGdzsl6dE$MO+CjhsqlQbFAYLU5i2XOOI2ZllbbQ653vPZh/Ni1ig=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "prodready1776001999",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T13:53:19.813Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$3twRtbcTxW5AZwJgupiOVZ$0npaQRFrQhfMTud/Q683J7e0WZVtBB/8pxt10UnfdHI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "prodready1776002021",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T13:53:41.653Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$bWdSl4r12CHe3Saa5l0EvI$dxQZEcxy77u9Bz59MRk2YdMhSUYyGgrVyj4ptV54HjQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "logincheck123",
+    "first_name": "",
+    "last_name": "",
+    "email": "demo@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T14:19:43.906Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$4KacZGF6wA0tOnROCSPERa$aSf/Z8sHjit24iU0muDrAi1OAr32mmCAAV+P9Gy+lys=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "narasimha",
+    "first_name": "",
+    "last_name": "",
+    "email": "nehru00123@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T14:22:47.866Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$WrOMRJB6pB8jipKbFMBcNZ$hWHvccSELxw0eyG1UhiBgmQ1TIEUurWCXrhLTwe8/f8=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mcqcheck1776005812",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T14:56:52.672Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 7,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$vpC7taktQQ1RTExJuaa25d$BCm0avK+1SjLr+VSK60Ir5iHjRazF61/Lic11BEJ5do=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mcqcheck1776005849",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T14:57:29.902Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$IlQAWHUNgpd10lLrCPDPxk$NT4+wzMT1LGMkC2tPjtseyCGIjY1BpFbhJ/JLwrrwHU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "coach1776010479",
+    "first_name": "",
+    "last_name": "",
+    "email": "coach1776010479@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T16:14:39.314Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$jOphhCZ4jzs31zoz9P38by$T6T7B91pBk97FP/T1guqKFaXq2uusByNzC13Qv3ujZg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "progress1776011242",
+    "first_name": "",
+    "last_name": "",
+    "email": "progress1776011242@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-12T16:27:22.710Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 1,
+  "fields": {
+    "user": null,
+    "topic": "System Design",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T10:40:16.426Z",
+    "updated_at": "2026-04-12T10:40:16.446Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 2,
+  "fields": {
+    "user": null,
+    "topic": "Backend Engineering",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T10:40:27.293Z",
+    "updated_at": "2026-04-12T10:40:27.311Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "topic": "Backend Engineering",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T11:27:21.757Z",
+    "updated_at": "2026-04-12T11:27:21.794Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 4,
+  "fields": {
+    "user": 2,
+    "topic": "System Design",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T13:53:20.668Z",
+    "updated_at": "2026-04-12T13:53:22.519Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 5,
+  "fields": {
+    "user": 3,
+    "topic": "Backend Engineering",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T13:53:42.427Z",
+    "updated_at": "2026-04-12T13:53:43.430Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 6,
+  "fields": {
+    "user": 5,
+    "topic": "System Design",
+    "round_type": "mcq",
+    "status": "in_progress",
+    "current_question_index": 0,
+    "created_at": "2026-04-12T14:23:30.685Z",
+    "updated_at": "2026-04-12T14:23:30.685Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 7,
+  "fields": {
+    "user": 5,
+    "topic": "System Design",
+    "round_type": "mcq",
+    "status": "in_progress",
+    "current_question_index": 3,
+    "created_at": "2026-04-12T14:23:51.950Z",
+    "updated_at": "2026-04-12T15:00:36.841Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 8,
+  "fields": {
+    "user": 6,
+    "topic": "System Design",
+    "round_type": "mcq",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T14:56:53.541Z",
+    "updated_at": "2026-04-12T14:56:55.548Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 9,
+  "fields": {
+    "user": 7,
+    "topic": "System Design",
+    "round_type": "mcq",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T14:57:30.909Z",
+    "updated_at": "2026-04-12T14:57:32.174Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 10,
+  "fields": {
+    "user": 5,
+    "topic": "React Js",
+    "round_type": "mcq",
+    "status": "in_progress",
+    "current_question_index": 2,
+    "created_at": "2026-04-12T15:34:05.345Z",
+    "updated_at": "2026-04-12T15:34:56.646Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 11,
+  "fields": {
+    "user": 5,
+    "topic": "React Js",
+    "round_type": "technical",
+    "status": "in_progress",
+    "current_question_index": 2,
+    "created_at": "2026-04-12T15:36:49.772Z",
+    "updated_at": "2026-04-12T15:45:13.777Z"
+  }
+},
+{
+  "model": "interviews.interview",
+  "pk": 12,
+  "fields": {
+    "user": 5,
+    "topic": "Javascript",
+    "round_type": "coding",
+    "status": "in_progress",
+    "current_question_index": 1,
+    "created_at": "2026-04-12T15:47:34.425Z",
+    "updated_at": "2026-04-12T15:47:40.864Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 1,
+  "fields": {
+    "interview": 1,
+    "text": "Explain a key concept in System Design and how you would apply it in production.",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T10:40:16.443Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 2,
+  "fields": {
+    "interview": 2,
+    "text": "Explain a key concept in Backend Engineering and how you would apply it in production.",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T10:40:27.308Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 3,
+  "fields": {
+    "interview": 3,
+    "text": "Explain a key concept in Backend Engineering and how you would apply it in production.",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T11:27:21.791Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 4,
+  "fields": {
+    "interview": 4,
+    "text": "How would you design a URL shortening service like bit.ly?",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T13:53:22.516Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 5,
+  "fields": {
+    "interview": 5,
+    "text": "What is the difference between a monolith and a microservices architecture in backend engineering?",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T13:53:43.426Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 6,
+  "fields": {
+    "interview": 7,
+    "text": "Which of the following is a common goal of system design?",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T14:24:03.688Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 7,
+  "fields": {
+    "interview": 8,
+    "text": "Question: What is the main purpose of system design in software engineering?\nA) To choose the color scheme for an application\nB) To plan how a system’s components work together\nC) To write unit tests for code\nD) To fix bugs in production",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T14:56:55.545Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 8,
+  "fields": {
+    "interview": 9,
+    "text": "Question: What is the main purpose of system design?\nA) To choose the color scheme of an application\nB) To plan how a system will be built and how its parts work together\nC) To write only the user interface code\nD) To test a system after it is deployed",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T14:57:32.171Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 9,
+  "fields": {
+    "interview": 7,
+    "text": "Question: What is the main purpose of system design in software engineering?\nA) To choose the color scheme of the user interface\nB) To define how a system’s components work together\nC) To write unit tests for the application\nD) To fix bugs after deployment",
+    "difficulty": "easy",
+    "order": 1,
+    "created_at": "2026-04-12T14:58:48.654Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 10,
+  "fields": {
+    "interview": 7,
+    "text": "Question: You are designing a globally distributed URL shortener that must generate 10 million new short URLs per day, support 99.99% availability, return redirects in under 50 ms at the 95th percentile worldwide, and allow custom aliases while preventing collisions. Which architecture best satisfies these requirements?\nA) A single primary relational database in one region with read replicas globally, using auto-increment IDs encoded in Base62 and synchronous writes for every request\nB) A multi-region active-active system with region-local ID generation using preallocated ranges or Snowflake-style IDs, a globally replicated metadata store for alias uniqueness, and edge-cached redirect lookups\nC) A sharded monolithic application in one region with Redis caching, where alias uniqueness is enforced by a distributed lock service and all writes are routed through a central queue\nD) A serverless function per request that queries a third-party URL shortening API for alias generation and stores mappings only in client-side cookies",
+    "difficulty": "hard",
+    "order": 2,
+    "created_at": "2026-04-12T15:00:36.837Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 11,
+  "fields": {
+    "interview": 10,
+    "text": "Question: What is React primarily used for?\nA) Building user interfaces\nB) Managing databases\nC) Writing operating systems\nD) Creating spreadsheets",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T15:34:18.392Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 12,
+  "fields": {
+    "interview": 10,
+    "text": "Question: In React 18, when a component uses `useState` and multiple state updates are triggered inside a single native event handler, which statement best describes how React determines whether to re-render and what value the state setter callback receives?\nA) React always re-renders after every `setState` call, and the callback receives the latest committed state immediately\nB) React batches the updates within the event, and the state setter callback receives the previous state value at the time the update is processed\nC) React ignores subsequent `setState` calls in the same event, and the callback receives the initial state from component mount\nD) React re-renders only if the state object reference changes, and the callback receives the DOM node associated with the component",
+    "difficulty": "hard",
+    "order": 1,
+    "created_at": "2026-04-12T15:34:56.643Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 13,
+  "fields": {
+    "interview": 11,
+    "text": "What is the purpose of the `key` prop in React lists?",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T15:36:55.235Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 14,
+  "fields": {
+    "interview": 11,
+    "text": "How does React’s reconciliation algorithm use keys in lists, and what problems can occur if keys are unstable or duplicated?",
+    "difficulty": "medium",
+    "order": 1,
+    "created_at": "2026-04-12T15:45:13.774Z"
+  }
+},
+{
+  "model": "interviews.question",
+  "pk": 15,
+  "fields": {
+    "interview": 12,
+    "text": "Write a JavaScript function that takes an array of numbers and returns a new array with all duplicate values removed, preserving the original order.",
+    "difficulty": "easy",
+    "order": 0,
+    "created_at": "2026-04-12T15:47:40.859Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 1,
+  "fields": {
+    "question": 1,
+    "user_input": "I would start with clear requirements and design for scale with caching and queues.",
+    "evaluation_status": "pending",
+    "created_at": "2026-04-12T10:40:16.465Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 2,
+  "fields": {
+    "question": 2,
+    "user_input": "I would design APIs with caching, observability, and clear SLOs.",
+    "evaluation_status": "pending",
+    "created_at": "2026-04-12T10:40:27.327Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 3,
+  "fields": {
+    "question": 3,
+    "user_input": "I would focus on observability and scaling strategy.",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T11:27:21.830Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 4,
+  "fields": {
+    "question": 4,
+    "user_input": "I would design for availability, caching, observability, and graceful degradation.",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T13:53:22.552Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 5,
+  "fields": {
+    "question": 5,
+    "user_input": "I would balance scalability and reliability with observability and idempotent retries.",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T13:53:43.473Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 6,
+  "fields": {
+    "question": 9,
+    "user_input": "B) To define how a system’s components work together",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:00:01.754Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 7,
+  "fields": {
+    "question": 10,
+    "user_input": "B) A multi-region active-active system with region-local ID generation using preallocated ranges or Snowflake-style IDs, a globally replicated metadata store for alias uniqueness, and edge-cached redirect lookups",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:03:14.190Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 8,
+  "fields": {
+    "question": 11,
+    "user_input": "A) Building user interfaces",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:34:43.999Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 9,
+  "fields": {
+    "question": 12,
+    "user_input": "A) React always re-renders after every `setState` call, and the callback receives the latest committed state immediately",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:36:06.627Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 10,
+  "fields": {
+    "question": 13,
+    "user_input": "When the state of a component changes, React needs to decide how to update the UI. Without keys, if you reorder a list, React might struggle to realize which item moved where, often leading to it re-rendering every item from scratch.",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:43:13.026Z"
+  }
+},
+{
+  "model": "interviews.answer",
+  "pk": 11,
+  "fields": {
+    "question": 15,
+    "user_input": "funtion(arr){\nfor(let i = 0,  i > 0,  arr){\nif(i == 0){\n}\n}\n\nreturn arr\n}\n\nconst arr = [1, 2, 3, 5, 3, 5]",
+    "evaluation_status": "completed",
+    "created_at": "2026-04-12T15:53:53.010Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 1,
+  "fields": {
+    "answer": 1,
+    "score": 50,
+    "strengths": [
+      "Attempted the question"
+    ],
+    "weaknesses": [
+      "Could not parse model evaluation"
+    ],
+    "improvements": [
+      "Provide a more structured response"
+    ],
+    "created_at": "2026-04-12T10:40:16.468Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 2,
+  "fields": {
+    "answer": 2,
+    "score": 50,
+    "strengths": [
+      "Attempted the question"
+    ],
+    "weaknesses": [
+      "Could not parse model evaluation"
+    ],
+    "improvements": [
+      "Provide a more structured response"
+    ],
+    "created_at": "2026-04-12T10:40:27.330Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 3,
+  "fields": {
+    "answer": 3,
+    "score": 50,
+    "strengths": [
+      "Attempted the question"
+    ],
+    "weaknesses": [
+      "Could not parse model evaluation"
+    ],
+    "improvements": [
+      "Provide a more structured response"
+    ],
+    "created_at": "2026-04-12T11:27:21.833Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 4,
+  "fields": {
+    "answer": 4,
+    "score": 28,
+    "strengths": [
+      "Mentions important system design qualities such as availability and caching.",
+      "Includes observability and graceful degradation, which are relevant for production systems."
+    ],
+    "weaknesses": [
+      "Does not explain the core architecture of a URL shortener, such as generating short codes, redirect flow, or data storage.",
+      "No discussion of key components like database schema, key generation strategy, or collision handling.",
+      "Omits scalability concerns such as read/write load, partitioning, replication, and cache invalidation.",
+      "Does not address analytics, custom aliases, expiration, abuse prevention, or link management features."
+    ],
+    "improvements": [
+      "Describe the end-to-end request flow: create short URL, store mapping, and redirect on lookup.",
+      "Explain how short codes are generated and how collisions are avoided.",
+      "Discuss storage choices, indexing, caching, and scaling for high read traffic.",
+      "Add considerations for rate limiting, expiration, analytics, and monitoring."
+    ],
+    "created_at": "2026-04-12T13:53:25.237Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 5,
+  "fields": {
+    "answer": 5,
+    "score": 8,
+    "strengths": [
+      "Mentions important backend concerns such as scalability, reliability, observability, and idempotent retries.",
+      "Shows awareness of distributed-system tradeoffs that are often relevant in microservices."
+    ],
+    "weaknesses": [
+      "Does not answer the question about the difference between a monolith and microservices.",
+      "The response is generic and could apply to many architecture discussions, not specifically this comparison.",
+      "It omits core distinctions such as deployment unit, codebase structure, service boundaries, and inter-service communication."
+    ],
+    "improvements": [
+      "Directly define a monolith as a single deployable application and microservices as multiple small independently deployable services.",
+      "Explain key tradeoffs: monoliths are simpler to develop and deploy, while microservices improve independent scaling and team autonomy but add operational complexity.",
+      "Optionally mention that microservices require stronger observability, network resilience, and data consistency handling."
+    ],
+    "created_at": "2026-04-12T13:53:45.555Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 6,
+  "fields": {
+    "answer": 6,
+    "score": 100,
+    "strengths": [
+      "Correctly identifies the main purpose of system design.",
+      "Matches the expected answer exactly.",
+      "Clear and concise response."
+    ],
+    "weaknesses": [],
+    "improvements": [
+      "No improvement needed; the answer is already correct."
+    ],
+    "created_at": "2026-04-12T15:00:02.992Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 7,
+  "fields": {
+    "answer": 7,
+    "score": 100,
+    "strengths": [
+      "Correctly selects the architecture that best matches the requirements.",
+      "Recognizes the need for multi-region active-active deployment to achieve 99.99% availability and low global latency.",
+      "Includes region-local ID generation, which avoids central bottlenecks and supports high write throughput.",
+      "Accounts for custom alias collision prevention via a globally replicated metadata store.",
+      "Uses edge-cached redirect lookups, which is appropriate for sub-50 ms p95 redirect performance worldwide."
+    ],
+    "weaknesses": [
+      "Does not explain why the other options are inferior.",
+      "Does not mention operational concerns such as conflict resolution, cache invalidation, or consistency tradeoffs.",
+      "Does not discuss how alias uniqueness is enforced under concurrent writes in more detail."
+    ],
+    "improvements": [
+      "Briefly justify the choice by tying each requirement to a specific architectural component.",
+      "Mention that a single-region primary database would be a bottleneck and a single point of failure.",
+      "Note that active-active plus edge caching is the key combination for global latency and availability.",
+      "Optionally mention that custom aliases may require strongly consistent coordination or a carefully designed uniqueness service."
+    ],
+    "created_at": "2026-04-12T15:03:17.008Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 8,
+  "fields": {
+    "answer": 8,
+    "score": 100,
+    "strengths": [
+      "Correctly identifies React as primarily used for building user interfaces.",
+      "Matches the expected multiple-choice answer exactly."
+    ],
+    "weaknesses": [],
+    "improvements": [
+      "No improvement needed; the answer is accurate and complete for the question asked."
+    ],
+    "created_at": "2026-04-12T15:34:45.196Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 9,
+  "fields": {
+    "answer": 9,
+    "score": 15,
+    "strengths": [
+      "The answer identifies that state updates are involved in determining re-render behavior.",
+      "It correctly references React state updates in the context of an event handler."
+    ],
+    "weaknesses": [
+      "The chosen option is incorrect for React 18. React batches multiple state updates inside a single native event, so it does not always re-render after every setState call.",
+      "The explanation about the state setter callback is wrong. In React, the updater function form receives the previous state value, not the latest committed state immediately.",
+      "It misses the key React 18 behavior of automatic batching within events."
+    ],
+    "improvements": [
+      "Select B instead: React batches updates within the event, and updater functions receive the previous state value.",
+      "Clarify that multiple setState calls in one event are typically batched into a single re-render in React 18.",
+      "If discussing the functional updater form, state that the callback argument is the prior state at the time React processes the update."
+    ],
+    "created_at": "2026-04-12T15:36:08.687Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 10,
+  "fields": {
+    "answer": 10,
+    "score": 78,
+    "strengths": [
+      "Correctly explains that keys help React identify items in a list during updates.",
+      "Mentions the important case of reordering and avoiding unnecessary re-renders.",
+      "Shows understanding that keys affect how React reconciles list items."
+    ],
+    "weaknesses": [
+      "Does not explicitly state that keys should be unique and stable among siblings.",
+      "Does not mention that keys help React preserve component state between renders.",
+      "Says React may re-render every item from scratch, which is a bit imprecise; the main issue is incorrect reconciliation and state association, not necessarily full re-rendering.",
+      "Does not mention that array index is usually a poor key choice when items can change order."
+    ],
+    "improvements": [
+      "Add that keys give each list item a stable identity so React can match old and new elements correctly.",
+      "Mention that keys help preserve state and avoid bugs when items are inserted, removed, or reordered.",
+      "Clarify that keys should be unique among siblings and preferably derived from stable IDs.",
+      "Optionally note that keys are mainly for React's reconciliation algorithm, not for passing data to the component."
+    ],
+    "created_at": "2026-04-12T15:43:15.311Z"
+  }
+},
+{
+  "model": "interviews.evaluation",
+  "pk": 11,
+  "fields": {
+    "answer": 11,
+    "score": 5,
+    "strengths": [
+      "Attempts to define a function and return a result.",
+      "Includes an example input array."
+    ],
+    "weaknesses": [
+      "The code is not valid JavaScript syntax (e.g., 'funtion' is misspelled, malformed for-loop).",
+      "It does not implement duplicate removal.",
+      "It returns the original array instead of a new array.",
+      "It does not preserve order through any actual logic because no logic is present.",
+      "The example array is defined but never used."
+    ],
+    "improvements": [
+      "Use valid JavaScript syntax and define the function properly.",
+      "Implement duplicate removal with a Set or by tracking seen values.",
+      "Return a new array rather than mutating or returning the input directly.",
+      "Ensure the original order is preserved by only adding unseen values as you iterate.",
+      "Test the function with the provided sample array."
+    ],
+    "created_at": "2026-04-12T15:53:55.672Z"
+  }
+},
+{
+  "model": "interviews.personalcoachsession",
+  "pk": 1,
+  "fields": {
+    "user": 8,
+    "topic": "System Design",
+    "subtopics": [
+      "Scalability and Load Balancing",
+      "Caching Strategies",
+      "Database Design and Replication",
+      "Microservices and Service Communication",
+      "Fault Tolerance and Reliability",
+      "API Design and Rate Limiting"
+    ],
+    "selected_subtopic": "Scalability and Load Balancing",
+    "stage": "questioning",
+    "current_question": "What is the difference between horizontal scaling and vertical scaling, and how does a load balancer distribute incoming requests across servers?",
+    "mastery_score": 18,
+    "attempt_count": 1,
+    "suggested_next_subtopic": "",
+    "created_at": "2026-04-12T16:14:42.178Z",
+    "updated_at": "2026-04-12T16:14:48.092Z"
+  }
+},
+{
+  "model": "interviews.personalcoachsession",
+  "pk": 2,
+  "fields": {
+    "user": 5,
+    "topic": "Backend System Design",
+    "subtopics": [
+      "Scalability and Load Balancing",
+      "Database Design and Data Modeling",
+      "Caching Strategies",
+      "API Design and Versioning",
+      "Message Queues and Asynchronous Processing",
+      "Fault Tolerance and High Availability"
+    ],
+    "selected_subtopic": "Caching Strategies",
+    "stage": "questioning",
+    "current_question": "When would you choose cache-aside over write-through, and why?",
+    "mastery_score": 0,
+    "attempt_count": 0,
+    "suggested_next_subtopic": "",
+    "created_at": "2026-04-12T16:17:31.281Z",
+    "updated_at": "2026-04-12T16:17:51.194Z"
+  }
+},
+{
+  "model": "interviews.personalcoachsession",
+  "pk": 3,
+  "fields": {
+    "user": 9,
+    "topic": "System Design",
+    "subtopics": [
+      "Scalability and Load Balancing",
+      "Caching Strategies",
+      "Database Design and Sharding",
+      "Distributed Systems and Consistency",
+      "API Design and Versioning",
+      "Fault Tolerance and Reliability"
+    ],
+    "selected_subtopic": "Scalability and Load Balancing",
+    "stage": "questioning",
+    "current_question": "What are two advantages of adding more servers instead of making one server bigger?",
+    "mastery_score": 12,
+    "attempt_count": 1,
+    "suggested_next_subtopic": "",
+    "created_at": "2026-04-12T16:27:24.618Z",
+    "updated_at": "2026-04-12T16:27:29.854Z"
+  }
+},
+{
+  "model": "interviews.personalcoachattempt",
+  "pk": 1,
+  "fields": {
+    "session": 3,
+    "question": "Why is horizontal scaling often preferred over vertical scaling in large systems?",
+    "user_answer": "This is my structured answer with example and tradeoffs.",
+    "score": 12,
+    "strengths": [
+      "The response is structured and indicates an attempt to address the question thoughtfully."
+    ],
+    "gaps": [
+      "It does not actually explain why horizontal scaling is preferred over vertical scaling.",
+      "No concrete tradeoffs, examples, or system design concepts are provided.",
+      "The answer is too generic to demonstrate understanding of scalability or load balancing."
+    ],
+    "feedback": "Your response is well organized, but it does not answer the question itself. To improve, explain that horizontal scaling adds more machines, which improves fault tolerance, capacity, and often cost efficiency compared with upgrading a single machine. Include at least one tradeoff, such as increased complexity in coordination and load balancing.",
+    "coach_decision": "remediate",
+    "created_at": "2026-04-12T16:27:29.851Z"
+  }
+}
+]
