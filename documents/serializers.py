@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Document
+from .models import Document, DocumentCategory
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -11,6 +11,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         source="get_old_or_new_display", read_only=True
     )
     file_url = serializers.SerializerMethodField()
+    category_name = serializers.CharField(source="category.name", read_only=True)
 
     class Meta:
         model = Document
@@ -20,6 +21,7 @@ class DocumentSerializer(serializers.ModelSerializer):
             "document_type",
             "document_type_display",
             "category",
+            "category_name",
             "old_or_new",
             "old_or_new_display",
             "file",
@@ -40,6 +42,12 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 class DocumentUploadSerializer(serializers.ModelSerializer):
     """Serializer for file upload with validation."""
+
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=DocumentCategory.objects.all(),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Document

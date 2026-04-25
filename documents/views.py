@@ -6,18 +6,20 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Document
+from .models import Document, DocumentCategory
 from .serializers import DocumentSerializer, DocumentUploadSerializer
 
 
 class DocumentFilter(filters.FilterSet):
     """Filter for Document queryset."""
 
+    category_name = filters.CharFilter(field_name="category__name", lookup_expr="icontains")
+
     class Meta:
         model = Document
         fields = {
             "document_type": ["exact"],
-            "category": ["exact", "icontains"],
+            "category": ["exact"],
             "old_or_new": ["exact"],
             "created_at": ["gte", "lte"],
         }
@@ -42,7 +44,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Return documents for the current user only."""
-        return Document.objects.filter(user=self.request.user)
+        return Document.objects.select_related("category", "user").filter(user=self.request.user)
 
     def get_serializer_class(self):
         """Use different serializers for different actions."""
@@ -76,12 +78,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def categories(self, request):
         """Get list of all unique categories used by the user."""
-        categories = (
-            self.get_queryset()
-            .values_list("category", flat=True)
-            .distinct()
-            .order_by("category")
-        )
+        categories = DocumentCategory.objects.all().values("id", "name")
         return Response({"categories": list(categories)})
 
     @action(detail=False, methods=["get"])
@@ -123,8 +120,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
             stats["by_type"][display_name] = queryset.filter(document_type=doc_type).count()
 
         # Count by category
-        categories = queryset.values_list("category", flat=True).distinct()
+        categories = queryset.values_list("category__name", flat=True).distinct()
         for category in categories:
-            stats["by_category"][category] = queryset.filter(category=category).count()
+            if not category:
+                continue
+            stats["by_category"][category] = queryset.filter(category__name=category).count()
 
         return Response(stats)
