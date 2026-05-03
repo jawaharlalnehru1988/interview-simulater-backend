@@ -6,3 +6,12 @@ db.sqlite3
 *.log
 staticfiles/
 media/
+
+# Java/Maven
+target/
+*.class
+*.jar
+*.war
+.idea/
+.eclipse/
+.vscode/
