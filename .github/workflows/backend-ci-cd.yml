@@ -1,0 +1,77 @@
+name: Interview Trainer Backend CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  # ─────────────────────────────────────────────────────────
+  # 1. Build & Test
+  # ─────────────────────────────────────────────────────────
+  build:
+    name: Build & Test (Java 21 / Maven)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run Tests
+        run: mvn -B test
+
+  # ─────────────────────────────────────────────────────────
+  # 2. Deploy to VPS  (master only)
+  # ─────────────────────────────────────────────────────────
+  deploy:
+    name: Deploy to Production VPS
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: SSH – Pull, Build & Restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            set -e
+
+            BACKEND_DIR=/var/www/interview-trainer/backend
+
+            echo ">>> Pulling latest code"
+            cd "$BACKEND_DIR"
+            git pull origin master
+
+            echo ">>> Building Spring Boot jar"
+            mvn -B clean package -DskipTests
+
+            echo ">>> Reloading systemd and restarting service"
+            sudo systemctl daemon-reload
+            sudo systemctl restart interview-backend.service
+
+            echo ">>> Waiting for service to come up (max 30 s)"
+            for i in $(seq 1 30); do
+                if curl -sf http://127.0.0.1:8080/health/ > /dev/null 2>&1; then
+                echo "Service is healthy after ${i}s"
+                break
+              fi
+              sleep 1
+            done
+
+            sudo systemctl --no-pager --full status interview-backend.service
+            echo "Backend deployment successful"
