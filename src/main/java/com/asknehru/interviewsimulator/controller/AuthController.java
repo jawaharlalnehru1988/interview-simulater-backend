@@ -38,8 +38,8 @@ public class AuthController {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+            .firstName(request.getFirstName() != null ? request.getFirstName() : "")
+            .lastName(request.getLastName() != null ? request.getLastName() : "")
                 .isActive(true)
                 .build();
 

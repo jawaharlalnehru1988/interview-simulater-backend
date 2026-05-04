@@ -31,11 +31,13 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "first_name")
-    private String firstName;
+    @Builder.Default
+    @Column(name = "first_name", nullable = false)
+    private String firstName = "";
 
-    @Column(name = "last_name")
-    private String lastName;
+    @Builder.Default
+    @Column(name = "last_name", nullable = false)
+    private String lastName = "";
 
     @Builder.Default
     @Column(name = "is_active")
@@ -44,6 +46,10 @@ public class User implements UserDetails {
     @Builder.Default
     @Column(name = "is_staff")
     private boolean isStaff = false;
+
+    @Builder.Default
+    @Column(name = "is_superuser", nullable = false)
+    private boolean isSuperuser = false;
 
     @Builder.Default
     @Column(name = "date_joined")
