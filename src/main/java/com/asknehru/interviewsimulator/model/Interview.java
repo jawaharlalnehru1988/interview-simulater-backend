@@ -15,7 +15,7 @@ import java.util.List;
 public class Interview {
 
     public enum RoundType {
-        TECHNICAL, MCQ, CODING;
+        BASIC, CRITICAL_SCENARIO, MCQ, CODING;
 
         @com.fasterxml.jackson.annotation.JsonCreator
         public static RoundType fromString(String value) {
@@ -40,7 +40,7 @@ public class Interview {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "round_type", length = 100)
-    private RoundType roundType = RoundType.TECHNICAL;
+    private RoundType roundType = RoundType.BASIC;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)

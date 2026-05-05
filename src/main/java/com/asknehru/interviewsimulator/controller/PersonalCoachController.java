@@ -29,15 +29,21 @@ public class PersonalCoachController {
             return ResponseEntity.badRequest().body(Map.of("detail", "topic is required"));
         }
 
-        PersonalCoachSession session = coachService.startOrResumeSession(user, topic);
-        return ResponseEntity.ok(session);
+        Map<String, Object> sessionData = coachService.startOrResumeSession(user, topic);
+        return ResponseEntity.ok(sessionData);
+    }
+
+    @GetMapping("/{sessionId}/resume/")
+    public ResponseEntity<?> resumeCoach(@PathVariable Long sessionId) {
+        Map<String, Object> sessionData = coachService.getSessionData(sessionId);
+        return ResponseEntity.ok(sessionData);
     }
 
     @PostMapping("/{sessionId}/choose-subtopic/")
     public ResponseEntity<?> chooseSubtopic(@PathVariable Long sessionId, @RequestBody Map<String, String> request) {
         String subtopic = request.get("subtopic");
-        PersonalCoachSession session = coachService.chooseSubtopic(sessionId, subtopic);
-        return ResponseEntity.ok(session);
+        Map<String, Object> result = coachService.chooseSubtopic(sessionId, subtopic);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/{sessionId}/choose-lesson/")

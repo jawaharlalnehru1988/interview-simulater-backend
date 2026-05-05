@@ -27,18 +27,90 @@ public class PersonalCoachService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public PersonalCoachSession startOrResumeSession(User user, String topic) {
-        return sessionRepository.findByUserAndTopic(user, topic)
+    public Map<String, Object> startOrResumeSession(User user, String topic) {
+        PersonalCoachSession session = sessionRepository.findFirstByUserAndTopicOrderByIdDesc(user, topic)
                 .orElseGet(() -> {
                     List<String> subtopics = generateSubtopics(topic);
-                    PersonalCoachSession session = PersonalCoachSession.builder()
+                    PersonalCoachSession s = PersonalCoachSession.builder()
                             .user(user)
                             .topic(topic)
                             .subtopics(serialize(subtopics))
                             .stage(PersonalCoachSession.Stage.SUBTOPIC_SELECTION)
                             .build();
-                    return sessionRepository.save(session);
+                    return sessionRepository.save(s);
                 });
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("session_id", session.getId());
+        response.put("topic", session.getTopic());
+        response.put("subtopics", deserializeList(session.getSubtopics()));
+        response.put("stage", session.getStage() != null ? session.getStage().name() : "SUBTOPIC_SELECTION");
+        response.put("coach_prompt", "Choose one subtopic to begin learning.");
+        return response;
+    }
+
+    public PersonalCoachSession getSession(Long sessionId) {
+        return sessionRepository.findById(sessionId)
+            .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Session not found"));
+    }
+
+    public Map<String, Object> getSessionData(Long sessionId) {
+        PersonalCoachSession session = getSession(sessionId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("session_id", session.getId());
+        response.put("topic", session.getTopic());
+        response.put("subtopics", deserializeList(session.getSubtopics()));
+        response.put("lessons_by_subtopic", deserializeMap(session.getLessonsBySubtopic()));
+        response.put("selected_subtopic", session.getSelectedSubtopic());
+        response.put("selected_lesson", session.getSelectedLesson());
+        response.put("stage", session.getStage() != null ? session.getStage().name() : "");
+        response.put("lesson", session.getCurrentLesson());
+        response.put("question", session.getCurrentQuestion());
+        response.put("attempt_count", session.getAttemptCount() != null ? session.getAttemptCount() : 0);
+        response.put("coach_prompt", "Resume your learning journey.");
+        
+        if (session.getSelectedSubtopic() != null) {
+            Map<String, List<String>> map = deserializeMap(session.getLessonsBySubtopic());
+            response.put("available_lessons", map.getOrDefault(session.getSelectedSubtopic(), new ArrayList<>()));
+        }
+
+        List<PersonalCoachAttempt> attempts = attemptRepository.findBySessionOrderByCreatedAtDesc(session);
+        List<String> practicedSubtopics = attempts.stream()
+            .map(PersonalCoachAttempt::getSubtopic)
+            .filter(s -> s != null && !s.isEmpty())
+            .distinct().toList();
+        response.put("practiced_subtopics", practicedSubtopics);
+        
+        if (session.getSelectedSubtopic() != null) {
+            List<String> practicedLessons = attempts.stream()
+                .filter(a -> session.getSelectedSubtopic().equals(a.getSubtopic()))
+                .map(PersonalCoachAttempt::getLesson)
+                .filter(l -> l != null && !l.isEmpty())
+                .distinct().toList();
+            response.put("practiced_lessons", practicedLessons);
+        }
+
+        attempts.stream().max(Comparator.comparing(PersonalCoachAttempt::getId)).ifPresent(latest -> {
+            Map<String, Object> lat = new HashMap<>();
+            lat.put("score", latest.getScore());
+            lat.put("strengths", deserializeList(latest.getStrengths()));
+            lat.put("gaps", deserializeList(latest.getGaps()));
+            lat.put("feedback", latest.getFeedback());
+            lat.put("coach_decision", latest.getCoachDecision() != null ? latest.getCoachDecision().name() : "REMEDIATE");
+            response.put("latest_attempt", lat);
+        });
+
+        Map<String, List<String>> practicedLessonsMap = new HashMap<>();
+        for (PersonalCoachAttempt attempt : attempts) {
+            if (attempt.getSubtopic() != null && attempt.getLesson() != null) {
+                practicedLessonsMap.computeIfAbsent(attempt.getSubtopic(), k -> new ArrayList<>())
+                                   .add(attempt.getLesson());
+            }
+        }
+        practicedLessonsMap.replaceAll((k, v) -> v.stream().distinct().toList());
+        response.put("practiced_lessons_map", practicedLessonsMap);
+
+        return response;
     }
 
     public List<String> generateSubtopics(String topic) {
@@ -61,7 +133,7 @@ public class PersonalCoachService {
     }
 
     @Transactional
-    public PersonalCoachSession chooseSubtopic(Long sessionId, String subtopic) {
+    public Map<String, Object> chooseSubtopic(Long sessionId, String subtopic) {
         PersonalCoachSession session = sessionRepository.findById(sessionId).orElseThrow();
         session.setSelectedSubtopic(subtopic);
         
@@ -71,7 +143,27 @@ public class PersonalCoachService {
         
         session.setLessonsBySubtopic(serialize(lessonsMap));
         session.setStage(PersonalCoachSession.Stage.LESSON_SELECTION);
-        return sessionRepository.save(session);
+        sessionRepository.save(session);
+        
+        return Map.of(
+            "session_id", session.getId(),
+            "topic", session.getTopic(),
+            "subtopic", subtopic,
+            "lessons", lessons,
+            "practiced_subtopics", attemptRepository.findBySessionOrderByCreatedAtDesc(session).stream()
+                    .map(PersonalCoachAttempt::getSubtopic)
+                    .filter(s -> s != null && !s.isEmpty())
+                    .distinct()
+                    .toList(),
+            "practiced_lessons", attemptRepository.findBySessionOrderByCreatedAtDesc(session).stream()
+                    .filter(a -> subtopic.equals(a.getSubtopic()))
+                    .map(PersonalCoachAttempt::getLesson)
+                    .filter(l -> l != null && !l.isEmpty())
+                    .distinct()
+                    .toList(),
+            "stage", session.getStage().name(),
+            "coach_prompt", "You are now learning '" + subtopic + "'. Please select a specific lesson below to continue."
+        );
     }
 
     public List<String> generateLessons(String topic, String subtopic) {
@@ -188,6 +280,15 @@ public class PersonalCoachService {
             return objectMapper.readValue(json, new TypeReference<Map<String, List<String>>>() {});
         } catch (Exception e) {
             return new HashMap<>();
+        }
+    }
+
+    private List<String> deserializeList(String json) {
+        if (json == null || json.isEmpty()) return new ArrayList<>();
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            return new ArrayList<>();
         }
     }
 

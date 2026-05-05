@@ -46,7 +46,8 @@ public class InterviewService {
 
     private int getMaxQuestions(Interview.RoundType roundType) {
         if (roundType == Interview.RoundType.MCQ) return 25;
-        if (roundType == Interview.RoundType.TECHNICAL) return 10;
+        if (roundType == Interview.RoundType.BASIC) return 10;
+        if (roundType == Interview.RoundType.CRITICAL_SCENARIO) return 5;
         if (roundType == Interview.RoundType.CODING) return 5;
         return maxQuestions;
     }
@@ -110,7 +111,7 @@ public class InterviewService {
         
         if (question.getInterview().getRoundType() == Interview.RoundType.MCQ) {
             finalScore = rawScore >= 70 ? 1 : 0;
-        } else if (question.getInterview().getRoundType() == Interview.RoundType.TECHNICAL) {
+        } else if (question.getInterview().getRoundType() == Interview.RoundType.BASIC || question.getInterview().getRoundType() == Interview.RoundType.CRITICAL_SCENARIO) {
             finalScore = (int) Math.round((double) rawScore / 10.0);
         } else if (question.getInterview().getRoundType() == Interview.RoundType.CODING) {
             finalScore = (int) Math.round((double) rawScore / 5.0);

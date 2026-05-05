@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface PersonalCoachSessionRepository extends JpaRepository<PersonalCoachSession, Long> {
     List<PersonalCoachSession> findByUserOrderByUpdatedAtDesc(User user);
-    Optional<PersonalCoachSession> findByUserAndTopic(User user, String topic);
+    Optional<PersonalCoachSession> findFirstByUserAndTopicOrderByIdDesc(User user, String topic);
 }

@@ -101,18 +101,29 @@ public class QuestionGeneratorService {
                     .build();
         }
 
-        String qTextTechnical;
-        switch (variation) {
-            case 1: qTextTechnical = "Describe the lifecycle of a request in " + topic + "."; break;
-            case 2: qTextTechnical = "What are the performance implications of using " + topic + "?"; break;
-            case 3: qTextTechnical = "How would you design a scalable system using " + topic + "?"; break;
-            case 4: qTextTechnical = "Explain the security best practices for " + topic + "."; break;
-            case 0:
-            default: qTextTechnical = "Explain a key concept in " + topic + " and how you would apply it in production."; break;
+        String qTextBasic;
+        if (roundType == Interview.RoundType.CRITICAL_SCENARIO) {
+            switch (variation) {
+                case 1: qTextBasic = "A critical production issue occurs in " + topic + ". How do you troubleshoot and resolve it under pressure?"; break;
+                case 2: qTextBasic = "Your " + topic + " system goes down during peak traffic. Walk me through your incident response plan."; break;
+                case 3: qTextBasic = "You discover a severe security vulnerability in " + topic + " right before a major release. What do you do?"; break;
+                case 4: qTextBasic = "Your team fundamentally disagrees on the architectural direction for " + topic + ". How do you resolve the conflict?"; break;
+                case 0:
+                default: qTextBasic = "Describe a situation where a core component of " + topic + " failed silently. How would you detect and fix it?"; break;
+            }
+        } else {
+            switch (variation) {
+                case 1: qTextBasic = "Describe the lifecycle of a request in " + topic + "."; break;
+                case 2: qTextBasic = "What are the performance implications of using " + topic + "?"; break;
+                case 3: qTextBasic = "How would you design a scalable system using " + topic + "?"; break;
+                case 4: qTextBasic = "Explain the security best practices for " + topic + "."; break;
+                case 0:
+                default: qTextBasic = "Explain a key concept in " + topic + " and how you would apply it in production."; break;
+            }
         }
 
         return GeneratedQuestion.builder()
-                .question("Question " + index + ": " + qTextTechnical)
+                .question("Question " + index + ": " + qTextBasic)
                 .suggestedAnswer("I would focus on scalability, maintainability, and following best practices.")
                 .mcqOptions(List.of())
                 .build();
