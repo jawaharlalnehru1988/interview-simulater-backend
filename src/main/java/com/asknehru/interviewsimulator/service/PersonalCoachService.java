@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +95,7 @@ public class PersonalCoachService {
             lat.put("strengths", deserializeList(latest.getStrengths()));
             lat.put("gaps", deserializeList(latest.getGaps()));
             lat.put("feedback", latest.getFeedback());
-            lat.put("coach_decision", latest.getCoachDecision() != null ? latest.getCoachDecision().name() : "REMEDIATE");
+            lat.put("coach_decision", latest.getCoachDecision().name());
             response.put("latest_attempt", lat);
         });
 
@@ -128,8 +127,10 @@ public class PersonalCoachService {
         List<String> lines = extractLines(raw);
         if (lines.size() >= 4) return lines;
 
-        // Fallback or retry with JSON
-        return fallbackSubtopics(topic);
+        throw new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+            "Failed to generate subtopics from AI. Please check your API key and connection."
+        );
     }
 
     @Transactional
@@ -180,7 +181,10 @@ public class PersonalCoachService {
         List<String> lessons = normalizeList(parsed.path("lessons"));
         if (lessons.size() >= 3) return lessons;
 
-        return List.of("Introduction to " + subtopic, "Core Concepts", "Practical Usage", "Interview Practice");
+        throw new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+            "Failed to generate lessons from AI. Please check your API key and connection."
+        );
     }
 
     @Transactional
@@ -198,8 +202,15 @@ public class PersonalCoachService {
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
         
-        String lessonText = parsed.path("lesson").asText("Lesson content loading error.");
-        String question = parsed.path("question").asText("Describe how you apply " + lesson);
+        if (!parsed.has("lesson") || !parsed.has("question")) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+                "Failed to generate lesson content from AI."
+            );
+        }
+
+        String lessonText = parsed.path("lesson").asText();
+        String question = parsed.path("question").asText();
 
         session.setCurrentLesson(lessonText);
         session.setCurrentQuestion(question);
@@ -222,8 +233,15 @@ public class PersonalCoachService {
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
 
-        int score = parsed.path("score").asInt(50);
-        String decision = parsed.path("coach_decision").asText("remediate").toUpperCase();
+        if (!parsed.has("score") || !parsed.has("coach_decision")) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+                "Failed to generate evaluation from AI. Please check your API key and connection."
+            );
+        }
+
+        int score = parsed.path("score").asInt();
+        String decision = parsed.path("coach_decision").asText().toUpperCase();
         PersonalCoachAttempt.CoachDecision coachDecision = decision.equals("ADVANCE") ? 
                 PersonalCoachAttempt.CoachDecision.ADVANCE : PersonalCoachAttempt.CoachDecision.REMEDIATE;
 
@@ -236,13 +254,16 @@ public class PersonalCoachService {
                 .score(score)
                 .strengths(serialize(normalizeList(parsed.path("strengths"))))
                 .gaps(serialize(normalizeList(parsed.path("gaps"))))
-                .feedback(parsed.path("feedback").asText(""))
+                .feedback(parsed.path("feedback").asText())
                 .coachDecision(coachDecision)
                 .build();
         attemptRepository.save(attempt);
 
-        session.setAttemptCount(session.getAttemptCount() + 1);
-        session.setMasteryScore((session.getMasteryScore() + score) / 2);
+        int currentAttemptCount = session.getAttemptCount() != null ? session.getAttemptCount() : 0;
+        session.setAttemptCount(currentAttemptCount + 1);
+        
+        int currentMastery = session.getMasteryScore() != null ? session.getMasteryScore() : score;
+        session.setMasteryScore(currentAttemptCount == 0 ? score : (currentMastery + score) / 2);
         
         if (coachDecision == PersonalCoachAttempt.CoachDecision.ADVANCE) {
             session.setStage(PersonalCoachSession.Stage.LESSON_SELECTION);
@@ -300,9 +321,5 @@ public class PersonalCoachService {
             if (!cleaned.isEmpty()) lines.add(cleaned);
         }
         return lines;
-    }
-
-    private List<String> fallbackSubtopics(String topic) {
-        return List.of("Fundamentals of " + topic, "Advanced " + topic, "Common Interview Questions on " + topic, "Practical Applications");
     }
 }

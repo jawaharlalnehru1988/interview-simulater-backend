@@ -45,15 +45,13 @@ public class EvaluatorService {
         JsonNode parsed = llmService.safeJsonLoads(raw);
 
         if (parsed.isEmpty()) {
-            return Map.of(
-                "score", 50,
-                "strengths", List.of("Attempted the question"),
-                "weaknesses", List.of("Could not parse model evaluation"),
-                "improvements", List.of("Provide a more structured response")
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+                "Failed to parse model evaluation from AI."
             );
         }
 
-        int score = parsed.path("score").asInt(50);
+        int score = parsed.path("score").asInt();
         score = Math.max(0, Math.min(score, 100));
 
         return Map.of(

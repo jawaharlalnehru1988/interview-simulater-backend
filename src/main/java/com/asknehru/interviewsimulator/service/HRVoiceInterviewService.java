@@ -75,11 +75,18 @@ public class HRVoiceInterviewService {
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
 
+        if (!parsed.has("score")) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+                "Failed to generate turn evaluation from AI."
+            );
+        }
+
         HRVoiceInterviewTurn turn = HRVoiceInterviewTurn.builder()
                 .session(session)
                 .question(question)
                 .answer(answer)
-                .score(parsed.path("score").asInt(50))
+                .score(parsed.path("score").asInt())
                 .strengths(serialize(normalizeList(parsed.path("strengths"))))
                 .weaknesses(serialize(normalizeList(parsed.path("weaknesses"))))
                 .improvements(serialize(normalizeList(parsed.path("improvements"))))
@@ -92,10 +99,17 @@ public class HRVoiceInterviewService {
         }
         sessionRepository.save(session);
 
+        if (!parsed.has("better_answer") || parsed.path("improvements").isEmpty()) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE, 
+                "Failed to generate feedback from AI."
+            );
+        }
+
         return Map.of(
             "score", turn.getScore(),
-            "better_answer", parsed.path("better_answer").asText(""),
-            "feedback", parsed.path("improvements").path(0).asText("Keep it concise and result-oriented.")
+            "better_answer", parsed.path("better_answer").asText(),
+            "feedback", parsed.path("improvements").path(0).asText()
         );
     }
 
