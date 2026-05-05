@@ -141,7 +141,7 @@ public class InterviewService {
         List<Question> questions = questionRepository.findByInterviewOrderByOrderDescCreatedAtDesc(interview);
         
         for (Question q : questions) {
-            Optional<Answer> answerOpt = answerRepository.findByQuestion(q);
+            Optional<Answer> answerOpt = answerRepository.findTopByQuestionOrderByIdDesc(q);
             if (answerOpt.isPresent() && answerOpt.get().getEvaluation() != null) {
                 Integer score = answerOpt.get().getEvaluation().getScore();
                 if (score >= 80) return Question.Difficulty.HARD;
@@ -188,7 +188,7 @@ public class InterviewService {
         int evaluatedQuestions = 0;
 
         List<Map<String, Object>> mappedQuestions = questions.stream().map(q -> {
-            Optional<Answer> answerOpt = answerRepository.findByQuestion(q);
+            Optional<Answer> answerOpt = answerRepository.findTopByQuestionOrderByIdDesc(q);
             Map<String, Object> qMap = new java.util.HashMap<>();
             qMap.put("question_id", q.getId());
             qMap.put("order", q.getOrder());

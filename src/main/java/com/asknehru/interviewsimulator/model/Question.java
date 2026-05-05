@@ -39,7 +39,7 @@ public class Question {
     @Column(name = "mcq_options", columnDefinition = "TEXT")
     private String mcqOptions; // JSON string
 
-    @Column(name = "sort_order")
+    @Column(name = "\"order\"", nullable = false)
     private Integer order;
 
     @Column(name = "created_at")
