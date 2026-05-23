@@ -29,7 +29,9 @@ public class PersonalCoachController {
             return ResponseEntity.badRequest().body(Map.of("detail", "topic is required"));
         }
 
-        Map<String, Object> sessionData = coachService.startOrResumeSession(user, topic);
+        String note = request.get("note");
+
+        Map<String, Object> sessionData = coachService.startOrResumeSession(user, topic, note);
         return ResponseEntity.ok(sessionData);
     }
 
