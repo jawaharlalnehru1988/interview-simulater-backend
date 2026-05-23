@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Question {
 
     public enum Difficulty {
-        EASY, MEDIUM, HARD
+        SUPER_EASY, EASY, MEDIUM, HARD, HARDER
     }
 
     @Id

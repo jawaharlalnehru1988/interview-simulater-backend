@@ -32,8 +32,13 @@ public class QuestionGeneratorService {
             "  \"question\": \"string\",\n" +
             "  \"suggested_answer\": \"string\",\n" +
             "  \"mcq_options\": [\"string\"] (if round is MCQ, provide exactly 4 options including the correct one, otherwise leave empty)\n" +
-            "}",
-            difficulty.name().toLowerCase(), roundType.name(), topic, previousQsText.toString()
+            "}\n\n" +
+            "CRITICAL RULES FOR MCQ OPTIONS & DISTRACTORS (if round is MCQ):\n" +
+            "1. Each question must have exactly 4 options, and the suggested_answer must match one of the options EXACTLY.\n" +
+            "2. NO TRIVIAL OR UNRELATED DISTRACTORS: All options must be highly relevant, plausible, and directly related to the specific sub-domain of '%s'. For example, if the topic is 'Java 8', all options must be Java 8 concepts/keywords/features (e.g. Streams API, Optional class, CompletableFuture, etc.). DO NOT include general computer science concepts (like binary trees), hardware terms (like floppy disks), unrelated web technologies (like HTML tags/CSS), or basic general knowledge unless it is directly part of the topic.\n" +
+            "3. CONTEXTUAL CONSISTENCY: The options must belong to the exact same conceptual category. For example, if the question asks about a feature introduced in a version, all options must be features from that or other versions of the same technology so they are confusing. If the question asks for a class name, all options must be plausible class names in the same API/package.\n" +
+            "4. CHALLENGING & REALISTIC: Ensure the options are challenging and test actual depth of knowledge appropriate for %s difficulty. Distractors must look like highly plausible alternatives to someone who does not know the exact answer.",
+            difficulty.name().toLowerCase(), roundType.name(), topic, previousQsText.toString(), topic, difficulty.name().toLowerCase()
         );
 
         String raw = llmService.generate(prompt);
