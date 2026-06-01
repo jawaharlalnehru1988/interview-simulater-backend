@@ -1,7 +1,9 @@
 package com.asknehru.interviewsimulator.service;
 
 import com.asknehru.interviewsimulator.model.Syllabus;
+import com.asknehru.interviewsimulator.model.SyllabusExplanation;
 import com.asknehru.interviewsimulator.model.User;
+import com.asknehru.interviewsimulator.repository.SyllabusExplanationRepository;
 import com.asknehru.interviewsimulator.repository.SyllabusRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,6 +23,7 @@ public class SyllabusService {
 
     private final LlmService llmService;
     private final SyllabusRepository syllabusRepository;
+    private final SyllabusExplanationRepository explanationRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
@@ -157,5 +160,51 @@ public class SyllabusService {
         } catch (Exception e) {
             return "[]";
         }
+    }
+
+    @Transactional(readOnly = true)
+    public String generateExplanation(User user, Long syllabusId, String topic, String subtopic) {
+        Syllabus syllabus = syllabusRepository.findByIdAndUser(syllabusId, user)
+                .orElseThrow(() -> new RuntimeException("Syllabus not found"));
+
+        String prompt = String.format(
+            "You are an expert technical tutor and software engineering instructor.\n" +
+            "Provide a comprehensive, clear, and highly structured explanation of the following subtopic in the context of the main topic.\n\n" +
+            "Main Topic: %s\n" +
+            "Section/Chapter: %s\n" +
+            "Subtopic: %s\n\n" +
+            "Guidelines:\n" +
+            "- Structure your response with a clear summary, key points, and coding examples/use cases where appropriate.\n" +
+            "- Use clean Markdown (such as headers, lists, code snippets, and bold text) for formatting.\n" +
+            "- Keep the tone professional, educational, and engaging.",
+            syllabus.getTopic(), topic, subtopic
+        );
+
+        return llmService.generate(prompt);
+    }
+
+    @Transactional
+    public SyllabusExplanation saveExplanation(User user, Long syllabusId, String topic, String subtopic, String explanation) {
+        Syllabus syllabus = syllabusRepository.findByIdAndUser(syllabusId, user)
+                .orElseThrow(() -> new RuntimeException("Syllabus not found"));
+
+        SyllabusExplanation syllabusExplanation = explanationRepository
+                .findByUserAndSyllabusAndTopicAndSubtopic(user, syllabus, topic, subtopic)
+                .orElseGet(() -> SyllabusExplanation.builder()
+                        .user(user)
+                        .syllabus(syllabus)
+                        .topic(topic)
+                        .subtopic(subtopic)
+                        .build());
+
+        syllabusExplanation.setExplanation(explanation);
+        return explanationRepository.save(syllabusExplanation);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SyllabusExplanation> getSavedExplanations(User user, Long syllabusId) {
+        Syllabus syllabus = syllabusRepository.findByIdAndUser(syllabusId, user)
+                .orElseThrow(() -> new RuntimeException("Syllabus not found"));
+        return explanationRepository.findBySyllabusAndUserOrderByTopicAscSubtopicAsc(syllabus, user);
     }
 }

@@ -1,6 +1,7 @@
 package com.asknehru.interviewsimulator.controller;
 
 import com.asknehru.interviewsimulator.model.Syllabus;
+import com.asknehru.interviewsimulator.model.SyllabusExplanation;
 import com.asknehru.interviewsimulator.model.User;
 import com.asknehru.interviewsimulator.repository.SyllabusRepository;
 import com.asknehru.interviewsimulator.repository.UserRepository;
@@ -108,5 +109,70 @@ public class SyllabusController {
         return syllabusRepository.findByIdAndUser(id, user)
                 .map(s -> ResponseEntity.ok(toSyllabusMap(s)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private Map<String, Object> toExplanationMap(SyllabusExplanation exp) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", exp.getId());
+        map.put("topic", exp.getTopic());
+        map.put("subtopic", exp.getSubtopic());
+        map.put("explanation", exp.getExplanation());
+        map.put("created_at", exp.getCreatedAt().toString());
+        map.put("updated_at", exp.getUpdatedAt().toString());
+        return map;
+    }
+
+    @PostMapping("/explain")
+    public ResponseEntity<?> explain(@RequestBody Map<String, Object> request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        Long syllabusId = null;
+        if (request.containsKey("syllabus_id")) {
+            syllabusId = ((Number) request.get("syllabus_id")).longValue();
+        } else if (request.containsKey("syllabusId")) {
+            syllabusId = ((Number) request.get("syllabusId")).longValue();
+        }
+        String topic = (String) request.get("topic");
+        String subtopic = (String) request.get("subtopic");
+
+        if (syllabusId == null || topic == null || subtopic == null) {
+            return ResponseEntity.badRequest().body(Map.of("detail", "syllabus_id, topic, and subtopic parameters are required"));
+        }
+
+        String explanation = syllabusService.generateExplanation(user, syllabusId, topic, subtopic);
+        return ResponseEntity.ok(Map.of("explanation", explanation));
+    }
+
+    @PostMapping("/explanation/save")
+    public ResponseEntity<?> saveExplanation(@RequestBody Map<String, Object> request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        Long syllabusId = null;
+        if (request.containsKey("syllabus_id")) {
+            syllabusId = ((Number) request.get("syllabus_id")).longValue();
+        } else if (request.containsKey("syllabusId")) {
+            syllabusId = ((Number) request.get("syllabusId")).longValue();
+        }
+        String topic = (String) request.get("topic");
+        String subtopic = (String) request.get("subtopic");
+        String explanation = (String) request.get("explanation");
+
+        if (syllabusId == null || topic == null || subtopic == null || explanation == null) {
+            return ResponseEntity.badRequest().body(Map.of("detail", "syllabus_id, topic, subtopic, and explanation parameters are required"));
+        }
+
+        SyllabusExplanation result = syllabusService.saveExplanation(user, syllabusId, topic, subtopic, explanation);
+        return ResponseEntity.ok(toExplanationMap(result));
+    }
+
+    @GetMapping("/{id}/explanations")
+    public ResponseEntity<?> getExplanations(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        List<SyllabusExplanation> result = syllabusService.getSavedExplanations(user, id);
+        return ResponseEntity.ok(result.stream().map(this::toExplanationMap).toList());
     }
 }
