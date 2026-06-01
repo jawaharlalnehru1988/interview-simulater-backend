@@ -27,9 +27,9 @@ public class JobDescriptionController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow();
         
-        String jobDescription = request.get("jobDescription");
+        String jobDescription = request.containsKey("jobDescription") ? request.get("jobDescription") : request.get("job_description");
         if (jobDescription == null || jobDescription.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("detail", "jobDescription is required"));
+            return ResponseEntity.badRequest().body(Map.of("detail", "job_description is required"));
         }
 
         JobDescriptionAnalysis result = analyzerService.analyzeAndSave(user, jobDescription);

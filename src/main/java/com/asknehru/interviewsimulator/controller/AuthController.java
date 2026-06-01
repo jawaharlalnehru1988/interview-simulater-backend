@@ -61,4 +61,22 @@ public class AuthController {
         String token = jwtUtils.generateToken(user);
         return ResponseEntity.ok(AuthResponse.builder().access(token).refresh(token).build());
     }
+
+    @PostMapping("/auth/token/refresh/")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, String> requestBody) {
+        String refresh = requestBody.get("refresh");
+        if (refresh == null || refresh.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("detail", "Refresh token is required"));
+        }
+        try {
+            String username = jwtUtils.extractUsername(refresh);
+            User user = userRepository.findByUsername(username).orElseThrow();
+            String newToken = jwtUtils.generateToken(new org.springframework.security.core.userdetails.User(
+                    user.getUsername(), user.getPassword(), new java.util.ArrayList<>()));
+            return ResponseEntity.ok(Map.of("access", newToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("detail", "Invalid or expired refresh token"));
+        }
+    }
 }
+

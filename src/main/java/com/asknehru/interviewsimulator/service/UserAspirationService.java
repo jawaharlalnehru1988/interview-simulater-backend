@@ -77,6 +77,23 @@ public class UserAspirationService {
         return savedAspiration;
     }
 
+    @Transactional
+    public AspirationChecklist generateChecklistForAspiration(UserAspiration aspiration, boolean forceRegenerate) {
+        Optional<AspirationChecklist> existingOpt = checklistRepository.findByAspiration(aspiration);
+        if (existingOpt.isPresent() && !forceRegenerate) {
+            return existingOpt.get();
+        }
+        
+        try {
+            JsonNode parsedRoadmap = objectMapper.readTree(aspiration.getRoadmap());
+            generateChecklist(aspiration, parsedRoadmap, aspiration.getTimelineMonths());
+            return checklistRepository.findByAspiration(aspiration).orElseThrow();
+        } catch (Exception e) {
+            log.error("Failed to generate checklist: {}", e.getMessage());
+            throw new RuntimeException("Failed to generate checklist");
+        }
+    }
+
     private void generateChecklist(UserAspiration aspiration, JsonNode roadmap, int timelineMonths) {
         int totalWeeks = Math.max(1, timelineMonths * 4);
         List<Map<String, Object>> items = new ArrayList<>();
@@ -102,12 +119,12 @@ public class UserAspirationService {
             }
         }
 
-        AspirationChecklist checklist = AspirationChecklist.builder()
-                .aspiration(aspiration)
-                .items(serialize(items))
-                .totalCount(items.size())
-                .completedCount(0)
-                .build();
+        AspirationChecklist checklist = checklistRepository.findByAspiration(aspiration)
+                .orElseGet(() -> AspirationChecklist.builder().aspiration(aspiration).build());
+        
+        checklist.setItems(serialize(items));
+        checklist.setTotalCount(items.size());
+        checklist.setCompletedCount(0);
         checklistRepository.save(checklist);
     }
 

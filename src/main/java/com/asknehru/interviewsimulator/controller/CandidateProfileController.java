@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/interview/candidate")
+@RequestMapping("/api/interview/profile")
 @RequiredArgsConstructor
 public class CandidateProfileController {
 
@@ -24,16 +24,47 @@ public class CandidateProfileController {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @GetMapping("/profile/")
+    private Map<String, Object> toProfileMap(CandidateProfile profile) {
+        List<String> primarySkills = List.of();
+        List<String> preferredLocations = List.of();
+        try {
+            if (profile.getPrimarySkills() != null && !profile.getPrimarySkills().isEmpty()) {
+                primarySkills = objectMapper.readValue(profile.getPrimarySkills(), new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+            }
+            if (profile.getPreferredLocations() != null && !profile.getPreferredLocations().isEmpty()) {
+                preferredLocations = objectMapper.readValue(profile.getPreferredLocations(), new com.fasterxml.jackson.core.type.TypeReference<List<String>>() {});
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("current_position", profile.getCurrentPosition() != null ? profile.getCurrentPosition() : "");
+        map.put("current_company", profile.getCurrentCompany() != null ? profile.getCurrentCompany() : "");
+        map.put("total_experience_years", profile.getTotalExperienceYears() != null ? profile.getTotalExperienceYears() : null);
+        map.put("primary_skills", primarySkills);
+        map.put("current_salary", profile.getCurrentSalary() != null ? profile.getCurrentSalary() : "");
+        map.put("salary_expectation", profile.getSalaryExpectation() != null ? profile.getSalaryExpectation() : "");
+        map.put("notice_period", profile.getNoticePeriod() != null ? profile.getNoticePeriod() : "");
+        map.put("reason_for_leaving", profile.getReasonForLeaving() != null ? profile.getReasonForLeaving() : "");
+        map.put("career_gap_details", profile.getCareerGapDetails() != null ? profile.getCareerGapDetails() : "");
+        map.put("highest_education", profile.getHighestEducation() != null ? profile.getHighestEducation() : "");
+        map.put("preferred_locations", preferredLocations);
+        map.put("preferred_role", profile.getPreferredRole() != null ? profile.getPreferredRole() : "");
+        map.put("additional_notes", profile.getAdditionalNotes() != null ? profile.getAdditionalNotes() : "");
+        return map;
+    }
+
+    @GetMapping("/settings/")
     public ResponseEntity<?> getProfile() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow();
         CandidateProfile profile = profileRepository.findByUser(user)
                 .orElseGet(() -> profileRepository.save(CandidateProfile.builder().user(user).build()));
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(toProfileMap(profile));
     }
 
-    @PutMapping("/profile/")
+    @PutMapping("/settings/")
     public ResponseEntity<?> updateProfile(@RequestBody Map<String, Object> request) throws JsonProcessingException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -59,6 +90,9 @@ public class CandidateProfileController {
         if (request.containsKey("additional_notes")) profile.setAdditionalNotes((String) request.get("additional_notes"));
 
         CandidateProfile saved = profileRepository.save(profile);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(Map.of(
+                "detail", "Profile updated successfully.",
+                "profile", toProfileMap(saved)
+        ));
     }
 }
