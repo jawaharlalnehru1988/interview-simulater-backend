@@ -175,4 +175,17 @@ public class SyllabusController {
         List<SyllabusExplanation> result = syllabusService.getSavedExplanations(user, id);
         return ResponseEntity.ok(result.stream().map(this::toExplanationMap).toList());
     }
+
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<?> deleteSyllabus(@PathVariable Long id) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+
+        try {
+            syllabusService.deleteSyllabus(id, user);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("detail", e.getMessage()));
+        }
+    }
 }

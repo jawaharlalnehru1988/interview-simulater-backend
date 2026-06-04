@@ -45,22 +45,9 @@ public class SyllabusService {
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
 
-        // Fallback if LLM fails
+        // Fail fast if LLM fails
         if (parsed.isEmpty() || !parsed.isArray()) {
-            List<Map<String, Object>> fallbackList = new ArrayList<>();
-            Map<String, Object> c1 = new HashMap<>();
-            c1.put("title", "Chapter 1: Introduction to " + topic);
-            c1.put("subtopics", List.of("Core Concepts", "Basic Setup and Installation", "Hello World Example"));
-            Map<String, Object> c2 = new HashMap<>();
-            c2.put("title", "Chapter 2: Intermediate " + topic);
-            c2.put("subtopics", List.of("Configuration Options", "Best Practices", "Common Use Cases"));
-            fallbackList.add(c1);
-            fallbackList.add(c2);
-            try {
-                parsed = objectMapper.valueToTree(fallbackList);
-            } catch (Exception e) {
-                // ignore
-            }
+            throw new RuntimeException("Failed to generate syllabus from AI. Please try again.");
         }
 
         Syllabus syllabus = Syllabus.builder()
@@ -206,5 +193,13 @@ public class SyllabusService {
         Syllabus syllabus = syllabusRepository.findByIdAndUser(syllabusId, user)
                 .orElseThrow(() -> new RuntimeException("Syllabus not found"));
         return explanationRepository.findBySyllabusAndUserOrderByTopicAscSubtopicAsc(syllabus, user);
+    }
+
+    @Transactional
+    public void deleteSyllabus(Long syllabusId, User user) {
+        Syllabus syllabus = syllabusRepository.findByIdAndUser(syllabusId, user)
+                .orElseThrow(() -> new RuntimeException("Syllabus not found"));
+        explanationRepository.deleteBySyllabus(syllabus);
+        syllabusRepository.delete(syllabus);
     }
 }

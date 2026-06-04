@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface SyllabusExplanationRepository extends JpaRepository<SyllabusExplanation, Long> {
     Optional<SyllabusExplanation> findByUserAndSyllabusAndTopicAndSubtopic(User user, Syllabus syllabus, String topic, String subtopic);
     List<SyllabusExplanation> findBySyllabusAndUserOrderByTopicAscSubtopicAsc(Syllabus syllabus, User user);
+    void deleteBySyllabus(Syllabus syllabus);
 }

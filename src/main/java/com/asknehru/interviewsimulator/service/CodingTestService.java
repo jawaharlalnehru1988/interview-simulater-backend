@@ -108,13 +108,7 @@ public class CodingTestService {
                     .build();
         } catch (Exception e) {
             log.error("Failed to generate coding challenge from LLM: {}", e.getMessage());
-            question = Question.builder()
-                    .interview(interview)
-                    .text("Mock Coding Challenge: Write a function to reverse a string in " + request.getTopic() + ".")
-                    .suggestedAnswer("Use a two-pointer approach or built-in reverse.")
-                    .difficulty(difficulty)
-                    .order(1)
-                    .build();
+            throw new RuntimeException("Failed to generate coding challenge from AI. Please try again.", e);
         }
 
         question = questionRepository.save(question);
@@ -162,8 +156,7 @@ public class CodingTestService {
             feedback = parsed.path("feedback").asText("Please refine your approach.");
         } catch (Exception e) {
             log.error("LLM approach evaluation failed: {}", e.getMessage());
-            approved = true; // Fallback to let user code if LLM fails
-            feedback = "Approach looks good, proceed to write code.";
+            throw new RuntimeException("Failed to evaluate coding approach using AI. Please try again.", e);
         }
 
         // Save approach as an Answer entry for logging
@@ -245,7 +238,7 @@ public class CodingTestService {
             explanation = parsed.path("explanation").asText("");
         } catch (Exception e) {
             log.error("Failed to evaluate direct answer: {}", e.getMessage());
-            explanation = "Answer recorded. Correct answer: " + question.getSuggestedAnswer();
+            throw new RuntimeException("Failed to evaluate direct answer using AI. Please try again.", e);
         }
 
         Answer answer = Answer.builder()
@@ -341,11 +334,7 @@ public class CodingTestService {
             response.put("refactored_code", refactored);
         } catch (Exception e) {
             log.error("Failed to grade candidate code solution: {}", e.getMessage());
-            response.put("score", 50);
-            response.put("strengths", List.of("Submitted solution successfully."));
-            response.put("weaknesses", List.of("Unable to run compilation trace due to system timeout."));
-            response.put("improvements", List.of("Double check complexity requirements."));
-            response.put("refactored_code", "// Reference optimal solution:\n" + question.getSuggestedAnswer());
+            throw new RuntimeException("Failed to evaluate code solution using AI. Please try again.", e);
         }
 
         return response;

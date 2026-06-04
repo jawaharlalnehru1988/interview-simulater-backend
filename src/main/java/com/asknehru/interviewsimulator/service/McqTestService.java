@@ -138,7 +138,7 @@ public class McqTestService {
 
         // Fallback if LLM failed or generated empty questions
         if (questions.isEmpty()) {
-            questions = generateMockQuestions(interview, request.getTopic(), request.getDifficulty());
+            throw new RuntimeException("Failed to generate MCQ questions from AI. Please try again.");
         }
 
         // 2. Prepare client safe response (exclude suggestedAnswer to prevent cheating)
@@ -264,69 +264,5 @@ public class McqTestService {
         return response;
     }
 
-    private List<Question> generateMockQuestions(Interview interview, String topic, Question.Difficulty difficulty) {
-        List<Question> list = new ArrayList<>();
-        boolean isJava = topic.toLowerCase().contains("java");
 
-        List<MockData> mockList = new ArrayList<>();
-        if (isJava) {
-            mockList.add(new MockData("Which of these is not a primitive type in Java?", "String", List.of("int", "boolean", "String", "char")));
-            mockList.add(new MockData("What is the size of a float variable in Java?", "32 bit", List.of("8 bit", "16 bit", "32 bit", "64 bit")));
-            mockList.add(new MockData("Which collection class allows unique elements only?", "Set", List.of("List", "Set", "Map", "Vector")));
-            mockList.add(new MockData("Which of the following classes is immutable in Java?", "String", List.of("StringBuilder", "String", "ArrayList", "HashMap")));
-            mockList.add(new MockData("What is the default value of a double variable in Java?", "0.0d", List.of("0.0d", "0.0f", "0", "null")));
-            mockList.add(new MockData("Which keyword is used to prevent method overriding in Java?", "final", List.of("static", "final", "abstract", "private")));
-            mockList.add(new MockData("What is the base class of all classes in Java?", "Object", List.of("Class", "Object", "System", "String")));
-            mockList.add(new MockData("Which memory area is used to store Object instances in Java?", "Heap", List.of("Stack", "Heap", "Method Area", "Register")));
-            mockList.add(new MockData("Which exception is thrown when an array is accessed with an illegal index?", "ArrayIndexOutOfBoundsException", List.of("NullPointerException", "ArrayIndexOutOfBoundsException", "ArithmeticException", "IllegalArgumentException")));
-            mockList.add(new MockData("What is garbage collection in Java?", "Automatic memory reclamation", List.of("Manual memory clean up", "Automatic memory reclamation", "Disk clean up utility", "Thread prioritization")));
-            mockList.add(new MockData("Which operator/method is used to compare two string values for content equality?", "equals()", List.of("==", "equals()", "compare()", "&&")));
-            mockList.add(new MockData("What is the entry point of a Java application?", "main()", List.of("main()", "start()", "init()", "run()")));
-            mockList.add(new MockData("What is an interface in Java?", "Reference type containing abstract methods", List.of("Concrete class", "Reference type containing abstract methods", "Template for database tables", "Data type for float variables")));
-            mockList.add(new MockData("Which keyword is used to inherit a class in Java?", "extends", List.of("implements", "extends", "inherits", "import")));
-            mockList.add(new MockData("What does JVM stand for?", "Java Virtual Machine", List.of("Java Virtual Machine", "Java Variable Manager", "Java Version Monitor", "Java Virtual Manager")));
-        } else {
-            for (int i = 1; i <= 15; i++) {
-                mockList.add(new MockData(
-                        String.format("Mock MCQ Question #%d on topic '%s' (Difficulty: %s)?", i, topic, difficulty.name()),
-                        "Option A",
-                        List.of("Option A", "Option B", "Option C", "Option D")
-                ));
-            }
-        }
-
-        for (int i = 0; i < mockList.size(); i++) {
-            MockData md = mockList.get(i);
-            try {
-                List<String> options = new ArrayList<>(md.options);
-                Collections.shuffle(options, java.util.concurrent.ThreadLocalRandom.current());
-
-                Question q = Question.builder()
-                        .interview(interview)
-                        .text(md.question)
-                        .suggestedAnswer(md.correct)
-                        .mcqOptions(objectMapper.writeValueAsString(options))
-                        .difficulty(difficulty)
-                        .order(i + 1)
-                        .build();
-                list.add(questionRepository.save(q));
-            } catch (Exception e) {
-                log.error("Error generating mock question: {}", e.getMessage());
-            }
-        }
-
-        return list;
-    }
-
-    private static class MockData {
-        String question;
-        String correct;
-        List<String> options;
-
-        MockData(String question, String correct, List<String> options) {
-            this.question = question;
-            this.correct = correct;
-            this.options = options;
-        }
-    }
 }

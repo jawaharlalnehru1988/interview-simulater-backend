@@ -62,6 +62,9 @@ public class JobDescriptionAnalyzerService {
 
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
+        if (parsed.isEmpty()) {
+            throw new RuntimeException("Failed to analyze job description from AI. Please try again.");
+        }
 
         // Extract context via regex (matching Python's logic)
         Map<String, Object> context = extractApplicationContext(jobDescription);

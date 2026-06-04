@@ -70,6 +70,47 @@ public class LlmService {
         return "";
     }
 
+    public String generateWithMessages(List<Map<String, String>> messages) {
+        if (apiKey == null || apiKey.isEmpty()) {
+            log.warn("LLM API Key is missing");
+            return "Error: LLM API Key is missing or not configured.";
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", model);
+        requestBody.put("messages", messages);
+        requestBody.put("temperature", 0.7);
+
+        for (int attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+                ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, entity, String.class);
+
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    JsonNode root = objectMapper.readTree(response.getBody());
+                    return root.path("choices").get(0).path("message").path("content").asText("");
+                }
+            } catch (Exception e) {
+                log.error("LLM request failed on attempt {}: {}", attempt + 1, e.getMessage());
+                if (attempt < maxRetries) {
+                    try {
+                        Thread.sleep(1000L * (attempt + 1));
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    return "Error: LLM request failed after retries: " + e.getMessage();
+                }
+            }
+        }
+
+        return "Error: Unexpected exit from retry loop";
+    }
+
     public JsonNode safeJsonLoads(String rawText) {
         if (rawText == null || rawText.isEmpty()) {
             return objectMapper.createObjectNode();

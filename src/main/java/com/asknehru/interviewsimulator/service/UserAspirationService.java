@@ -53,9 +53,9 @@ public class UserAspirationService {
         String raw = llmService.generate(prompt);
         JsonNode parsed = llmService.safeJsonLoads(raw);
         
-        // Use fallbacks if LLM fails
+        // Fail fast if LLM fails
         if (parsed.isEmpty()) {
-            // Simple fallback logic omitted for brevity, but LLM usually works
+            throw new RuntimeException("Failed to generate career roadmap from AI. Please try again.");
         }
 
         UserAspiration aspiration = UserAspiration.builder()
