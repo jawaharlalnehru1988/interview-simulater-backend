@@ -56,11 +56,12 @@ public class SyllabusController {
         User user = userRepository.findByUsername(username).orElseThrow();
 
         String topic = (String) request.get("topic");
+        String description = (String) request.get("description");
         if (topic == null || topic.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("detail", "Topic is required"));
         }
 
-        Syllabus result = syllabusService.generateSyllabus(user, topic.trim());
+        Syllabus result = syllabusService.generateSyllabus(user, topic.trim(), description);
         return ResponseEntity.status(201).body(toSyllabusMap(result));
     }
 

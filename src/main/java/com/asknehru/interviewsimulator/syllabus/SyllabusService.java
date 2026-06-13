@@ -28,10 +28,15 @@ public class SyllabusService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public Syllabus generateSyllabus(User user, String topic) {
+    public Syllabus generateSyllabus(User user, String topic, String description) {
+        String additionalInstructions = (description != null && !description.trim().isEmpty()) 
+                ? "Additional Instructions from the user: " + description + "\n\n" 
+                : "";
+
         String prompt = String.format(
             "You are an expert technical instructor and curriculum designer.\n" +
             "Create a highly structured and comprehensive learning syllabus for the topic: %s.\n\n" +
+            "%s" +
             "Return STRICT JSON only, containing a list of objects representing the chapters/topics, each containing a list of subtopics. " +
             "Do NOT wrap it in any JSON key, just return a raw JSON list:\n" +
             "[\n" +
@@ -40,7 +45,7 @@ public class SyllabusService {
             "    \"subtopics\": [\"Subtopic A\", \"Subtopic B\"]\n" +
             "  }\n" +
             "]",
-            topic
+            topic, additionalInstructions
         );
 
         String raw = llmService.generate(prompt);
