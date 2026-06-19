@@ -57,11 +57,13 @@ public class SyllabusController {
 
         String topic = (String) request.get("topic");
         String description = (String) request.get("description");
+        String sourceText = (String) request.get("sourceText");
+        
         if (topic == null || topic.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("detail", "Topic is required"));
         }
 
-        Syllabus result = syllabusService.generateSyllabus(user, topic.trim(), description);
+        Syllabus result = syllabusService.generateSyllabus(user, topic.trim(), description, sourceText);
         return ResponseEntity.status(201).body(toSyllabusMap(result));
     }
 

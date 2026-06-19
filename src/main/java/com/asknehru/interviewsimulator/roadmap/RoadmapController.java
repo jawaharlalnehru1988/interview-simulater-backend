@@ -26,6 +26,20 @@ public class RoadmapController {
         }
     }
 
+    @PostMapping("/api/public/roadmaps/{id}/export")
+    public ResponseEntity<?> exportRoadmap(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String domain = body.get("domain");
+        if (domain == null || domain.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("detail", "domain is required"));
+        }
+        try {
+            roadmapService.exportRoadmap(id, domain);
+            return ResponseEntity.ok(Map.of("detail", "Roadmap successfully exported to " + domain));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("detail", e.getMessage()));
+        }
+    }
+
     @GetMapping("/api/public/roadmaps/list")
     public ResponseEntity<?> listPublicRoadmaps() {
         List<Roadmap> roadmaps = roadmapRepository.findAllByOrderByCreatedAtDescIdDesc();

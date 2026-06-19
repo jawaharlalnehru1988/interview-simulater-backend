@@ -101,4 +101,57 @@ public class RoadmapService {
         roadmapSubtopicRepository.save(subtopic);
         return explanation;
     }
+
+    @Transactional(readOnly = true)
+    public void exportRoadmap(Long id, String domain) {
+        Roadmap roadmap = roadmapRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Roadmap not found"));
+
+        String targetUrl;
+        if ("asknehru".equalsIgnoreCase(domain)) {
+            targetUrl = "http://localhost:8083/api/roadmaps/import-syllabus/push-roadmap";
+        } else {
+            throw new RuntimeException("Domain " + domain + " is currently not supported for export.");
+        }
+
+        try {
+            List<Map<String, Object>> chaptersList = roadmap.getChapters().stream().map(c -> {
+                Map<String, Object> cmap = new java.util.HashMap<>();
+                cmap.put("chapterName", c.getChapterName());
+                List<Map<String, String>> subtopics = c.getSubtopics().stream().map(s -> {
+                    Map<String, String> smap = new java.util.HashMap<>();
+                    smap.put("subtopicName", s.getSubtopicName());
+                    return smap;
+                }).collect(java.util.stream.Collectors.toList());
+                cmap.put("subtopics", subtopics);
+                return cmap;
+            }).collect(java.util.stream.Collectors.toList());
+
+            Map<String, Object> payload = new java.util.HashMap<>();
+            payload.put("mainTopic", roadmap.getMainTopic());
+            payload.put("routerLink", roadmap.getRouterLink());
+            payload.put("intro", "Curated learning path exported from Interview Trainer.");
+            payload.put("chapters", chaptersList);
+
+            String jsonPayload = objectMapper.writeValueAsString(payload);
+
+            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(targetUrl))
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonPayload))
+                    .build();
+
+            java.net.http.HttpResponse<String> response = client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            
+            if (response.statusCode() != 201 && response.statusCode() != 200) {
+                throw new RuntimeException("Target responded with status " + response.statusCode() + ": " + response.body());
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to export roadmap: {}", e.getMessage());
+            throw new RuntimeException("Export failed: " + e.getMessage());
+        }
+    }
 }

@@ -28,13 +28,18 @@ public class SyllabusService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
-    public Syllabus generateSyllabus(User user, String topic, String description) {
+    public Syllabus generateSyllabus(User user, String topic, String description, String sourceText) {
         String additionalInstructions = (description != null && !description.trim().isEmpty()) 
                 ? "Additional Instructions from the user: " + description + "\n\n" 
                 : "";
 
+        String sourceTextInstruction = (sourceText != null && !sourceText.trim().isEmpty())
+                ? "Generate a syllabus based strictly on the following source material:\n\"\"\"\n" + sourceText + "\n\"\"\"\n\n"
+                : "";
+
         String prompt = String.format(
             "You are an expert technical instructor and curriculum designer.\n" +
+            "%s" +
             "Create a highly structured and comprehensive learning syllabus for the topic: %s.\n\n" +
             "%s" +
             "Return STRICT JSON only, containing a list of objects representing the chapters/topics, each containing a list of subtopics. " +
@@ -45,7 +50,7 @@ public class SyllabusService {
             "    \"subtopics\": [\"Subtopic A\", \"Subtopic B\"]\n" +
             "  }\n" +
             "]",
-            topic, additionalInstructions
+            sourceTextInstruction, topic, additionalInstructions
         );
 
         String raw = llmService.generate(prompt);
