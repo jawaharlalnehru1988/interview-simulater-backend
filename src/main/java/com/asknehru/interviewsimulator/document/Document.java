@@ -1,6 +1,7 @@
 package com.asknehru.interviewsimulator.document;
 import com.asknehru.interviewsimulator.auth.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,6 +39,7 @@ public class Document {
     @Column(name = "document_type", length = 50)
     private DocumentType documentType = DocumentType.OTHER;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private DocumentCategory category;
