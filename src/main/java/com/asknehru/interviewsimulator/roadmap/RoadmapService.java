@@ -93,7 +93,8 @@ public class RoadmapService {
             "Topic: %s\n" +
             "Subtopic: %s\n\n" +
             "Please provide a comprehensive, detailed explanation of this subtopic in the context of the main topic. " +
-            "Use Markdown formatting, provide code examples if applicable, and explain it clearly.",
+            "Use Markdown formatting, provide code examples if applicable, and explain it clearly. " +
+            "If providing code examples, prefer using Java and Spring Boot unless the topic specifically requires another language.",
             mainTopic, subtopicName
         );
         String explanation = llmService.generate(prompt);
@@ -110,6 +111,8 @@ public class RoadmapService {
         String targetUrl;
         if ("asknehru".equalsIgnoreCase(domain)) {
             targetUrl = "http://localhost:8083/api/roadmaps/import-syllabus/push-roadmap";
+        } else if ("askharekrishna".equalsIgnoreCase(domain)) {
+            targetUrl = "http://localhost:8001/api/course-roadmap/import-syllabus/push-roadmap";
         } else {
             throw new RuntimeException("Domain " + domain + " is currently not supported for export.");
         }
@@ -136,10 +139,18 @@ public class RoadmapService {
             String jsonPayload = objectMapper.writeValueAsString(payload);
 
             java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
-            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+            java.net.http.HttpRequest.Builder requestBuilder = java.net.http.HttpRequest.newBuilder()
                     .uri(java.net.URI.create(targetUrl))
                     .header("Content-Type", "application/json")
-                    .header("Accept", "application/json")
+                    .header("Accept", "application/json");
+
+            if ("askharekrishna".equalsIgnoreCase(domain)) {
+                String auth = "narasimha:Bala#$88";
+                String encodedAuth = java.util.Base64.getEncoder().encodeToString(auth.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                requestBuilder.header("Authorization", "Basic " + encodedAuth);
+            }
+
+            java.net.http.HttpRequest request = requestBuilder
                     .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonPayload))
                     .build();
 
