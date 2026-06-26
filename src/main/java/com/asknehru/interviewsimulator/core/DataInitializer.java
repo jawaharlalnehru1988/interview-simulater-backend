@@ -4,7 +4,7 @@ import com.asknehru.interviewsimulator.auth.User;
 import com.asknehru.interviewsimulator.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public void run(String... args) throws Exception {
         if (!userRepository.existsByUsername("narasimha")) {
             User user = User.builder()
                     .username("narasimha")
-                    .password(passwordEncoder.encode("Murari#1988"))
+                    .password("N/A")
                     .email("narasimha@example.com")
                     .firstName("Narasimha")
                     .isActive(true)

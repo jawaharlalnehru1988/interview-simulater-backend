@@ -10,10 +10,12 @@ import com.asknehru.interviewsimulator.interview.Question;
 import com.asknehru.interviewsimulator.interview.Answer;
 import com.asknehru.interviewsimulator.interview.Interview;
 import com.asknehru.interviewsimulator.test.dto.StartCodingTestRequest;
+import com.asknehru.interviewsimulator.test.dto.EvaluateManipulationRequest;
 import com.asknehru.interviewsimulator.test.dto.SubmitCodingCodeRequest;
 import com.asknehru.interviewsimulator.test.dto.SubmitCodingApproachRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class CodingTestService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final EvaluationRepository evaluationRepository;
+    private final com.asknehru.interviewsimulator.test.category.SavedQuestionSetRepository savedQuestionSetRepository;
     private final LlmService llmService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -348,5 +351,179 @@ public class CodingTestService {
         }
 
         return response;
+    }
+    public List<String> generateManipulationQuestions(com.asknehru.interviewsimulator.test.dto.StartManipulationRequest request) {
+        String topic = request.getTopic();
+        String category = request.getCategory();
+        String previousQuestionsInstruction = "";
+
+        if (request.getPreviousQuestions() != null && !request.getPreviousQuestions().isEmpty()) {
+            previousQuestionsInstruction = "CRITICAL RULE: Do NOT generate any questions that match or are highly similar to the following previously generated questions:\n"
+                    + String.join("\n", request.getPreviousQuestions()) + "\n\n";
+        }
+
+        String prompt = String.format(
+                "Generate exactly 10 short, sentence-formatted coding interview questions for the programming language '%s' and the category '%s'.\n" +
+                "The questions should be easy to medium difficulty, focusing on string manipulation, array manipulation, searching, sorting, or object manipulation as appropriate for the category.\n" +
+                "%s" +
+                "Example format:\n" +
+                "Write a function that takes a string as input and returns the number of vowels in the string.\n" +
+                "Write a function that takes an array of numbers and returns the largest number.\n\n" +
+                "Return the output STRICTLY as a raw JSON array of strings matching this output schema:\n" +
+                "[\n" +
+                "  \"question 1\",\n" +
+                "  \"question 2\",\n" +
+                "  ...\n" +
+                "]\n\n" +
+                "Return ONLY raw JSON, no markdown blocks or extra text.",
+                topic, category, previousQuestionsInstruction
+        );
+
+        String llmResponse = llmService.generate(prompt);
+        llmResponse = llmResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+
+        try {
+            return objectMapper.readValue(llmResponse, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            log.error("Failed to parse LLM response for manipulation questions", e);
+            throw new RuntimeException("Failed to generate manipulation questions.");
+        }
+    }
+
+    @Transactional
+    public Map<String, Object> evaluateManipulationAnswers(User user, EvaluateManipulationRequest request) {
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append(String.format("You are an expert interviewer evaluating a candidate's code in %s for the category %s.\n", request.getTopic(), request.getCategory()));
+        promptBuilder.append("The candidate was given 10 questions and has provided answers for each.\n\n");
+
+        for (int i = 0; i < request.getQuestions().size(); i++) {
+            promptBuilder.append(String.format("Question %d: %s\n", i + 1, request.getQuestions().get(i)));
+            promptBuilder.append(String.format("Candidate's Approach:\n%s\n\n", request.getApproaches() != null && request.getApproaches().size() > i ? request.getApproaches().get(i) : "No approach provided."));
+            promptBuilder.append(String.format("Candidate's Code:\n%s\n\n", request.getAnswers() != null && request.getAnswers().size() > i ? request.getAnswers().get(i) : "No code provided."));
+        }
+
+        promptBuilder.append("Evaluate both the candidate's approach and their code carefully.\n");
+        promptBuilder.append("Score the approach out of 4 points (did they understand the problem, plan logical steps?).\n");
+        promptBuilder.append("Score the code out of 6 points (does it compile/run, is it optimal, does it handle edge cases?).\n");
+        promptBuilder.append("Return the evaluation as raw JSON matching this output schema exactly:\n");
+        promptBuilder.append("{\n");
+        promptBuilder.append("  \"total_score\": 85, // out of 100\n");
+        promptBuilder.append("  \"evaluations\": [\n");
+        promptBuilder.append("    {\n");
+        promptBuilder.append("      \"question\": \"<the question text>\",\n");
+        promptBuilder.append("      \"feedback\": \"<your brief feedback on their approach and code>\",\n");
+        promptBuilder.append("      \"approach_score\": 3,\n");
+        promptBuilder.append("      \"code_score\": 5,\n");
+        promptBuilder.append("      \"score\": 8 // sum of approach_score and code_score\n");
+        promptBuilder.append("    }\n");
+        promptBuilder.append("    // 10 items total\n");
+        promptBuilder.append("  ]\n");
+        promptBuilder.append("}\n\n");
+        promptBuilder.append("Return ONLY raw JSON, no markdown blocks.");
+
+        String llmResponse = llmService.generate(promptBuilder.toString());
+        llmResponse = llmResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+
+        try {
+            Map<String, Object> response = objectMapper.readValue(llmResponse, new TypeReference<Map<String, Object>>() {});
+            
+            // Save to DB for the user history
+            Interview interview = Interview.builder()
+                    .user(user)
+                    .topic(request.getTopic() + " - " + request.getCategory() + " (Manipulation)")
+                    .roundType(Interview.RoundType.CODING) // Or generic CODING since MANIPULATION doesn't exist
+                    .status(Interview.Status.COMPLETED)
+                    .currentQuestionIndex(request.getQuestions().size())
+                    .build();
+            interviewRepository.save(interview);
+
+            int totalScore = (Integer) response.getOrDefault("total_score", 0);
+            
+            // We just store one overarching Evaluation representing the total test
+            Question summaryQuestion = Question.builder()
+                    .interview(interview)
+                    .text("Manipulation Challenge: " + request.getCategory())
+                    .difficulty(Question.Difficulty.EASY)
+                    .order(1)
+                    .build();
+            questionRepository.save(summaryQuestion);
+
+            Answer summaryAnswer = Answer.builder()
+                    .question(summaryQuestion)
+                    .userInput("Approaches: " + request.getApproaches() + "\nAnswers: " + request.getAnswers())
+                    .evaluationStatus(Answer.EvaluationStatus.COMPLETED)
+                    .build();
+            answerRepository.save(summaryAnswer);
+
+            Evaluation evaluation = Evaluation.builder()
+                    .answer(summaryAnswer)
+                    .score(totalScore)
+                    .strengths("Manipulation challenge completed.")
+                    .weaknesses("")
+                    .improvements(llmResponse) // raw json stored as improvements
+                    .build();
+            evaluationRepository.save(evaluation);
+
+            return response;
+        } catch (Exception e) {
+            log.error("Failed to parse LLM response for manipulation evaluation", e);
+            throw new RuntimeException("Failed to evaluate manipulation answers.");
+        }
+    }
+
+    public com.asknehru.interviewsimulator.test.category.SavedQuestionSet saveQuestionSet(com.asknehru.interviewsimulator.test.category.SavedQuestionSet request) {
+        return savedQuestionSetRepository.save(request);
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<com.asknehru.interviewsimulator.test.category.SavedQuestionSet> getSavedQuestionSets(String topic, String category) {
+        return savedQuestionSetRepository.findByTopicAndCategory(topic, category);
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<Map<String, Object>> getManipulationHistory(User user) {
+        List<Interview> interviews = interviewRepository.findByUserOrderByUpdatedAtDesc(user);
+        List<Map<String, Object>> history = new ArrayList<>();
+
+        for (Interview interview : interviews) {
+            if (interview.getTopic() != null && interview.getTopic().contains("(Manipulation)")) {
+                try {
+                    List<Question> questions = questionRepository.findByInterviewOrderByOrderAscCreatedAtAsc(interview);
+                    if (questions.isEmpty()) continue;
+                    Question question = questions.get(0);
+                    
+                    Answer answer = answerRepository.findTopByQuestionOrderByIdDesc(question).orElse(null);
+                    if (answer != null) {
+                        Evaluation evaluation = evaluationRepository.findByAnswer(answer);
+                        if (evaluation != null && evaluation.getImprovements() != null) {
+                            JsonNode evalNode = objectMapper.readTree(evaluation.getImprovements());
+                            
+                            List<String> questionsList = new ArrayList<>();
+                            if (evalNode.has("evaluations")) {
+                                for (JsonNode ev : evalNode.get("evaluations")) {
+                                    if (ev.has("question")) {
+                                        questionsList.add(ev.get("question").asText());
+                                    }
+                                }
+                            }
+                            
+                            Map<String, Object> record = new HashMap<>();
+                            record.put("id", interview.getId());
+                            // Clean up topic string to make it display-friendly, e.g. "Java - String Manipulation (Manipulation)" -> "Java - String Manipulation"
+                            String cleanTopic = interview.getTopic().replace(" (Manipulation)", "");
+                            record.put("topic", cleanTopic);
+                            record.put("score", evaluation.getScore());
+                            record.put("date", interview.getUpdatedAt());
+                            record.put("questions", questionsList);
+                            
+                            history.add(record);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to parse history for interview {}", interview.getId(), e);
+                }
+            }
+        }
+        return history;
     }
 }

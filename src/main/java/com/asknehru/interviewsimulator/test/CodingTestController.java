@@ -1,7 +1,10 @@
 package com.asknehru.interviewsimulator.test;
 import com.asknehru.interviewsimulator.test.dto.StartCodingTestRequest;
+import com.asknehru.interviewsimulator.test.dto.StartManipulationRequest;
+import com.asknehru.interviewsimulator.test.dto.EvaluateManipulationRequest;
 import com.asknehru.interviewsimulator.test.dto.SubmitCodingCodeRequest;
 import com.asknehru.interviewsimulator.test.dto.SubmitCodingApproachRequest;
+import java.util.List;
 
 import com.asknehru.interviewsimulator.auth.User;
 import com.asknehru.interviewsimulator.auth.UserRepository;
@@ -21,7 +24,7 @@ public class CodingTestController {
     private final CodingTestService codingTestService;
     private final UserRepository userRepository;
 
-    @PostMapping("/generate")
+    @PostMapping("/start")
     public ResponseEntity<?> generateCodingTest(@RequestBody StartCodingTestRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow();
@@ -29,7 +32,7 @@ public class CodingTestController {
         return ResponseEntity.ok(test);
     }
 
-    @PostMapping("/{interviewId}/{questionId}/submit-approach")
+    @PostMapping("/{interviewId}/question/{questionId}/approach")
     public ResponseEntity<?> submitApproach(
             @PathVariable Long interviewId,
             @PathVariable Long questionId,
@@ -38,7 +41,7 @@ public class CodingTestController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{interviewId}/{questionId}/submit-direct")
+    @PostMapping("/{interviewId}/question/{questionId}/direct")
     public ResponseEntity<?> submitDirect(
             @PathVariable Long interviewId,
             @PathVariable Long questionId,
@@ -48,12 +51,46 @@ public class CodingTestController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/{interviewId}/{questionId}/submit-code")
+    @PostMapping("/{interviewId}/question/{questionId}/code")
     public ResponseEntity<?> submitCode(
             @PathVariable Long interviewId,
             @PathVariable Long questionId,
             @RequestBody SubmitCodingCodeRequest request) {
         Map<String, Object> result = codingTestService.submitCode(interviewId, questionId, request);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/manipulation/start")
+    public ResponseEntity<?> generateManipulationQuestions(@RequestBody StartManipulationRequest request) {
+        List<String> questions = codingTestService.generateManipulationQuestions(request);
+        return ResponseEntity.ok(Map.of("questions", questions));
+    }
+
+    @PostMapping("/manipulation/evaluate")
+    public ResponseEntity<?> evaluateManipulationAnswers(@RequestBody EvaluateManipulationRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        Map<String, Object> result = codingTestService.evaluateManipulationAnswers(user, request);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/manipulation/saved-sets")
+    public ResponseEntity<?> saveQuestionSet(@RequestBody com.asknehru.interviewsimulator.test.category.SavedQuestionSet request) {
+        com.asknehru.interviewsimulator.test.category.SavedQuestionSet saved = codingTestService.saveQuestionSet(request);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/manipulation/saved-sets")
+    public ResponseEntity<?> getSavedSets(@RequestParam String topic, @RequestParam String category) {
+        List<com.asknehru.interviewsimulator.test.category.SavedQuestionSet> sets = codingTestService.getSavedQuestionSets(topic, category);
+        return ResponseEntity.ok(sets);
+    }
+
+    @GetMapping("/manipulation/history")
+    public ResponseEntity<?> getManipulationHistory() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        List<Map<String, Object>> history = codingTestService.getManipulationHistory(user);
+        return ResponseEntity.ok(history);
     }
 }
