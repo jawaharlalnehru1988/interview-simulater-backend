@@ -1,10 +1,10 @@
-package com.asknehru.interviewsimulator.test;
+package com.asknehru.interviewsimulator.codingtrainer;
 
-import com.asknehru.interviewsimulator.test.dto.StartMcqTestRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitMcqTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.StartMcqTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitMcqTestRequest;
 import com.asknehru.interviewsimulator.auth.User;
 import com.asknehru.interviewsimulator.auth.UserRepository;
-import com.asknehru.interviewsimulator.test.McqTestService;
+import com.asknehru.interviewsimulator.codingtrainer.McqTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,4 +1,4 @@
-package com.asknehru.interviewsimulator.test.category;
+package com.asknehru.interviewsimulator.codingtrainer.category;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

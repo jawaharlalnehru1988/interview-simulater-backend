@@ -1,4 +1,4 @@
-package com.asknehru.interviewsimulator.test;
+package com.asknehru.interviewsimulator.codingtrainer;
 import com.asknehru.interviewsimulator.ai.LlmService;
 import com.asknehru.interviewsimulator.interview.EvaluationRepository;
 import com.asknehru.interviewsimulator.interview.AnswerRepository;
@@ -14,8 +14,8 @@ import com.asknehru.interviewsimulator.interview.Question;
 import com.asknehru.interviewsimulator.interview.Answer;
 import com.asknehru.interviewsimulator.interview.Interview;
 
-import com.asknehru.interviewsimulator.test.dto.StartMcqTestRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitMcqTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.StartMcqTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitMcqTestRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

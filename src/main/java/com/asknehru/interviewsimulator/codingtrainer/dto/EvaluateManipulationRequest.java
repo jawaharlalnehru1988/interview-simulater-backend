@@ -1,4 +1,4 @@
-package com.asknehru.interviewsimulator.test.dto;
+package com.asknehru.interviewsimulator.codingtrainer.dto;
 
 import lombok.Data;
 import java.util.List;

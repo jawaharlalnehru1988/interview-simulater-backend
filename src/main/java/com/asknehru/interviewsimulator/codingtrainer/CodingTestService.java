@@ -1,4 +1,4 @@
-package com.asknehru.interviewsimulator.test;
+package com.asknehru.interviewsimulator.codingtrainer;
 import com.asknehru.interviewsimulator.ai.LlmService;
 import com.asknehru.interviewsimulator.interview.EvaluationRepository;
 import com.asknehru.interviewsimulator.interview.AnswerRepository;
@@ -9,10 +9,10 @@ import com.asknehru.interviewsimulator.auth.User;
 import com.asknehru.interviewsimulator.interview.Question;
 import com.asknehru.interviewsimulator.interview.Answer;
 import com.asknehru.interviewsimulator.interview.Interview;
-import com.asknehru.interviewsimulator.test.dto.StartCodingTestRequest;
-import com.asknehru.interviewsimulator.test.dto.EvaluateManipulationRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitCodingCodeRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitCodingApproachRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.StartCodingTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.EvaluateManipulationRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitCodingCodeRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitCodingApproachRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,7 +33,7 @@ public class CodingTestService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final EvaluationRepository evaluationRepository;
-    private final com.asknehru.interviewsimulator.test.category.SavedQuestionSetRepository savedQuestionSetRepository;
+    private final com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSetRepository savedQuestionSetRepository;
     private final LlmService llmService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -352,7 +352,7 @@ public class CodingTestService {
 
         return response;
     }
-    public List<String> generateManipulationQuestions(com.asknehru.interviewsimulator.test.dto.StartManipulationRequest request) {
+    public List<String> generateManipulationQuestions(com.asknehru.interviewsimulator.codingtrainer.dto.StartManipulationRequest request) {
         String topic = request.getTopic();
         String category = request.getCategory();
         String previousQuestionsInstruction = "";
@@ -471,12 +471,12 @@ public class CodingTestService {
         }
     }
 
-    public com.asknehru.interviewsimulator.test.category.SavedQuestionSet saveQuestionSet(com.asknehru.interviewsimulator.test.category.SavedQuestionSet request) {
+    public com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet saveQuestionSet(com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet request) {
         return savedQuestionSetRepository.save(request);
     }
 
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<com.asknehru.interviewsimulator.test.category.SavedQuestionSet> getSavedQuestionSets(String topic, String category) {
+    public List<com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet> getSavedQuestionSets(String topic, String category) {
         return savedQuestionSetRepository.findByTopicAndCategory(topic, category);
     }
 

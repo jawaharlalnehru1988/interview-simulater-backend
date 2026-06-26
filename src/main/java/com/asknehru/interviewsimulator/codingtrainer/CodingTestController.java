@@ -1,14 +1,14 @@
-package com.asknehru.interviewsimulator.test;
-import com.asknehru.interviewsimulator.test.dto.StartCodingTestRequest;
-import com.asknehru.interviewsimulator.test.dto.StartManipulationRequest;
-import com.asknehru.interviewsimulator.test.dto.EvaluateManipulationRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitCodingCodeRequest;
-import com.asknehru.interviewsimulator.test.dto.SubmitCodingApproachRequest;
+package com.asknehru.interviewsimulator.codingtrainer;
+import com.asknehru.interviewsimulator.codingtrainer.dto.StartCodingTestRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.StartManipulationRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.EvaluateManipulationRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitCodingCodeRequest;
+import com.asknehru.interviewsimulator.codingtrainer.dto.SubmitCodingApproachRequest;
 import java.util.List;
 
 import com.asknehru.interviewsimulator.auth.User;
 import com.asknehru.interviewsimulator.auth.UserRepository;
-import com.asknehru.interviewsimulator.test.CodingTestService;
+import com.asknehru.interviewsimulator.codingtrainer.CodingTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,14 +75,14 @@ public class CodingTestController {
     }
 
     @PostMapping("/manipulation/saved-sets")
-    public ResponseEntity<?> saveQuestionSet(@RequestBody com.asknehru.interviewsimulator.test.category.SavedQuestionSet request) {
-        com.asknehru.interviewsimulator.test.category.SavedQuestionSet saved = codingTestService.saveQuestionSet(request);
+    public ResponseEntity<?> saveQuestionSet(@RequestBody com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet request) {
+        com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet saved = codingTestService.saveQuestionSet(request);
         return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/manipulation/saved-sets")
     public ResponseEntity<?> getSavedSets(@RequestParam String topic, @RequestParam String category) {
-        List<com.asknehru.interviewsimulator.test.category.SavedQuestionSet> sets = codingTestService.getSavedQuestionSets(topic, category);
+        List<com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet> sets = codingTestService.getSavedQuestionSets(topic, category);
         return ResponseEntity.ok(sets);
     }
 
