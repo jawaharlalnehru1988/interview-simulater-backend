@@ -12,6 +12,7 @@ import java.util.List;
 public class CategoryDataSeeder implements CommandLineRunner {
 
     private final ManipulationCategoryRepository categoryRepository;
+    private final ComplexityCategoryRepository complexityCategoryRepository;
 
     @Override
     public void run(String... args) {
@@ -33,6 +34,22 @@ public class CategoryDataSeeder implements CommandLineRunner {
 
             defaultCategories.forEach(name -> {
                 categoryRepository.save(ManipulationCategory.builder().name(name).build());
+            });
+        }
+
+        if (complexityCategoryRepository.count() == 0) {
+            List<String> defaultComplexityCategories = Arrays.asList(
+                    "Recursion",
+                    "Sorting",
+                    "Nested Loops",
+                    "Tree Traversal",
+                    "Graph Traversal",
+                    "Dynamic Programming",
+                    "General"
+            );
+
+            defaultComplexityCategories.forEach(name -> {
+                complexityCategoryRepository.save(ComplexityCategory.builder().name(name).build());
             });
         }
     }

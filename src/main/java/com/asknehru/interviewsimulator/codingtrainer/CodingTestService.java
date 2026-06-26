@@ -72,10 +72,10 @@ public class CodingTestService {
                     "Return ONLY raw JSON.",
                     request.getTopic(), customPromptPart, request.getTopic()
             );
-        } else if (difficulty == Question.Difficulty.EASY) {
+        } else if (difficulty == Question.Difficulty.COMPLEXITY) {
             prompt = String.format(
                     "Generate a Time and Space Complexity calculation question for a coding interview on the topic: '%s'.\n" +
-                    "Difficulty level: EASY (testing algorithmic execution estimation).\n%s\n" +
+                    "Difficulty level: COMPLEXITY (testing algorithmic execution estimation).\n%s\n" +
                     "Follow these rules:\n" +
                     "1. Provide a code snippet in %s illustrating an algorithm (e.g. recursion, sorting, nested loops, binary search, tree traversal).\n" +
                     "2. Ask the user to determine the Time Complexity and Space Complexity of the code (e.g. 'Determine the Big-O time and space complexity of the function below').\n" +
@@ -443,7 +443,7 @@ public class CodingTestService {
             Question summaryQuestion = Question.builder()
                     .interview(interview)
                     .text("Manipulation Challenge: " + request.getCategory())
-                    .difficulty(Question.Difficulty.EASY)
+                    .difficulty(Question.Difficulty.COMPLEXITY)
                     .order(1)
                     .build();
             questionRepository.save(summaryQuestion);
@@ -468,6 +468,127 @@ public class CodingTestService {
         } catch (Exception e) {
             log.error("Failed to parse LLM response for manipulation evaluation", e);
             throw new RuntimeException("Failed to evaluate manipulation answers.");
+        }
+    }
+
+    public List<String> generateComplexityQuestions(com.asknehru.interviewsimulator.codingtrainer.dto.StartComplexityRequest request) {
+        String topic = request.getTopic();
+        String category = request.getCategory();
+        String previousQuestionsInstruction = "";
+
+        if (request.getPreviousQuestions() != null && !request.getPreviousQuestions().isEmpty()) {
+            previousQuestionsInstruction = "CRITICAL RULE: Do NOT generate any questions that match or are highly similar to the following previously generated questions:\n"
+                    + String.join("\n", request.getPreviousQuestions()) + "\n\n";
+        }
+
+        String prompt = String.format(
+                "Generate exactly 10 short coding interview questions for the programming language '%s' and the complexity category '%s'.\n" +
+                "The questions should ask the candidate to determine the Time Complexity and Space Complexity of a given concept or small code snippet.\n" +
+                "%s" +
+                "CRITICAL: If you include code snippets in the question, you MUST format them using proper multi-line markdown code blocks and preserve all newlines and indentation inside the code snippet. Do NOT put code on a single line.\n\n" +
+                "Example format:\n" +
+                "What is the time complexity of this code?\n" +
+                "```java\n" +
+                "for (int i = 0; i < n; i++) {\n" +
+                "    for (int j = 0; j < n; j++) {\n" +
+                "        // do something\n" +
+                "    }\n" +
+                "}\n" +
+                "```\n\n" +
+                "Return the output STRICTLY as a raw JSON array of strings matching this output schema:\n" +
+                "[\n" +
+                "  \"question 1\",\n" +
+                "  \"question 2\",\n" +
+                "  ...\n" +
+                "]\n\n" +
+                "Return ONLY raw JSON, no markdown blocks enclosing the entire response, and no extra text.",
+                topic, category, previousQuestionsInstruction
+        );
+
+        String llmResponse = llmService.generate(prompt);
+        llmResponse = llmResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+
+        try {
+            return objectMapper.readValue(llmResponse, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            log.error("Failed to parse LLM response for complexity questions", e);
+            throw new RuntimeException("Failed to generate complexity questions.");
+        }
+    }
+
+    @Transactional
+    public Map<String, Object> evaluateComplexityAnswers(User user, com.asknehru.interviewsimulator.codingtrainer.dto.EvaluateComplexityRequest request) {
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append(String.format("You are an expert interviewer evaluating a candidate's understanding of algorithmic complexity in %s for the category %s.\n", request.getTopic(), request.getCategory()));
+        promptBuilder.append("The candidate was given 10 questions and has provided answers for each.\n\n");
+
+        for (int i = 0; i < request.getQuestions().size(); i++) {
+            promptBuilder.append(String.format("Question %d: %s\n", i + 1, request.getQuestions().get(i)));
+            promptBuilder.append(String.format("Candidate's Answer:\n%s\n\n", request.getAnswers() != null && request.getAnswers().size() > i ? request.getAnswers().get(i) : "No answer provided."));
+        }
+
+        promptBuilder.append("Evaluate the candidate's answers carefully.\n");
+        promptBuilder.append("Score each answer out of 10 points (is it correct? did they provide correct time and space complexity?).\n");
+        promptBuilder.append("Return the evaluation as raw JSON matching this output schema exactly:\n");
+        promptBuilder.append("{\n");
+        promptBuilder.append("  \"total_score\": 85, // out of 100\n");
+        promptBuilder.append("  \"evaluations\": [\n");
+        promptBuilder.append("    {\n");
+        promptBuilder.append("      \"question\": \"<the question text>\",\n");
+        promptBuilder.append("      \"feedback\": \"<your brief feedback explaining the correct answer>\",\n");
+        promptBuilder.append("      \"score\": 8 // out of 10\n");
+        promptBuilder.append("    }\n");
+        promptBuilder.append("    // 10 items total\n");
+        promptBuilder.append("  ]\n");
+        promptBuilder.append("}\n\n");
+        promptBuilder.append("Return ONLY raw JSON, no markdown blocks.");
+
+        String llmResponse = llmService.generate(promptBuilder.toString());
+        llmResponse = llmResponse.replaceAll("```json", "").replaceAll("```", "").trim();
+
+        try {
+            Map<String, Object> response = objectMapper.readValue(llmResponse, new TypeReference<Map<String, Object>>() {});
+            
+            // Save to DB for the user history
+            Interview interview = Interview.builder()
+                    .user(user)
+                    .topic(request.getTopic() + " - " + request.getCategory() + " (Complexity)")
+                    .roundType(Interview.RoundType.CODING)
+                    .status(Interview.Status.COMPLETED)
+                    .currentQuestionIndex(request.getQuestions().size())
+                    .build();
+            interviewRepository.save(interview);
+
+            int totalScore = (Integer) response.getOrDefault("total_score", 0);
+            
+            Question summaryQuestion = Question.builder()
+                    .interview(interview)
+                    .text("Complexity Challenge: " + request.getCategory())
+                    .difficulty(Question.Difficulty.COMPLEXITY)
+                    .order(1)
+                    .build();
+            questionRepository.save(summaryQuestion);
+
+            Answer summaryAnswer = Answer.builder()
+                    .question(summaryQuestion)
+                    .userInput("Answers: " + request.getAnswers())
+                    .evaluationStatus(Answer.EvaluationStatus.COMPLETED)
+                    .build();
+            answerRepository.save(summaryAnswer);
+
+            Evaluation evaluation = Evaluation.builder()
+                    .answer(summaryAnswer)
+                    .score(totalScore)
+                    .strengths("Complexity challenge completed.")
+                    .weaknesses("")
+                    .improvements(llmResponse) // raw json stored as improvements
+                    .build();
+            evaluationRepository.save(evaluation);
+
+            return response;
+        } catch (Exception e) {
+            log.error("Failed to parse LLM response for complexity evaluation", e);
+            throw new RuntimeException("Failed to evaluate complexity answers.");
         }
     }
 

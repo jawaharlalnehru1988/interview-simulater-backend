@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Question {
 
     public enum Difficulty {
-        SUPER_EASY, EASY, MEDIUM, HARD, HARDER
+        SUPER_EASY, COMPLEXITY, MEDIUM, HARD, HARDER
     }
 
     @Id
@@ -31,7 +31,7 @@ public class Question {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private Difficulty difficulty = Difficulty.EASY;
+    private Difficulty difficulty = Difficulty.COMPLEXITY;
 
     @Column(name = "suggested_answer", columnDefinition = "TEXT")
     private String suggestedAnswer;

@@ -147,11 +147,11 @@ public class InterviewService {
                 Integer score = answerOpt.get().getEvaluation().getScore();
                 if (score >= 80) return Question.Difficulty.HARD;
                 if (score >= 60) return Question.Difficulty.MEDIUM;
-                return Question.Difficulty.EASY;
+                return Question.Difficulty.COMPLEXITY;
             }
         }
         
-        return Question.Difficulty.EASY;
+        return Question.Difficulty.COMPLEXITY;
     }
 
     private void maybeCompleteInterview(Interview interview) {

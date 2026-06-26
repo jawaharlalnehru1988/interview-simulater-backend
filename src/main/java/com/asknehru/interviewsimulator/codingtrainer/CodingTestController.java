@@ -74,6 +74,20 @@ public class CodingTestController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/complexity/start")
+    public ResponseEntity<?> generateComplexityQuestions(@RequestBody com.asknehru.interviewsimulator.codingtrainer.dto.StartComplexityRequest request) {
+        List<String> questions = codingTestService.generateComplexityQuestions(request);
+        return ResponseEntity.ok(Map.of("questions", questions));
+    }
+
+    @PostMapping("/complexity/evaluate")
+    public ResponseEntity<?> evaluateComplexityAnswers(@RequestBody com.asknehru.interviewsimulator.codingtrainer.dto.EvaluateComplexityRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow();
+        Map<String, Object> result = codingTestService.evaluateComplexityAnswers(user, request);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/manipulation/saved-sets")
     public ResponseEntity<?> saveQuestionSet(@RequestBody com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet request) {
         com.asknehru.interviewsimulator.codingtrainer.category.SavedQuestionSet saved = codingTestService.saveQuestionSet(request);
