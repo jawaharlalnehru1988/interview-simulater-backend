@@ -89,12 +89,14 @@ public class RoadmapService {
         String subtopicName = subtopic.getSubtopicName();
 
         String prompt = String.format(
-            "You are an expert technical instructor.\n" +
+            "You are an expert instructor.\n" +
             "Topic: %s\n" +
             "Subtopic: %s\n\n" +
             "Please provide a comprehensive, detailed explanation of this subtopic in the context of the main topic. " +
-            "Use Markdown formatting, provide code examples if applicable, and explain it clearly. " +
-            "If providing code examples, prefer using Java and Spring Boot unless the topic specifically requires another language.",
+            "Use Markdown formatting and explain it clearly. " +
+            "CRITICAL INSTRUCTION: ONLY provide code examples or pseudo-code if the topic is inherently technical or programming-related. " +
+            "Do NOT provide code examples for non-technical topics (e.g., yoga, history, soft skills, general wellness). " +
+            "If providing code examples for technical topics, prefer using Java and Spring Boot unless the topic specifically requires another language.",
             mainTopic, subtopicName
         );
         String explanation = llmService.generate(prompt);

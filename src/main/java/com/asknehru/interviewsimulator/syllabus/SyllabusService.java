@@ -166,14 +166,15 @@ public class SyllabusService {
                 .orElseThrow(() -> new RuntimeException("Syllabus not found"));
 
         String prompt = String.format(
-            "You are an expert technical tutor and software engineering instructor.\n" +
+            "You are an expert instructor.\n" +
             "Provide a comprehensive, clear, and highly structured explanation of the following subtopic in the context of the main topic.\n\n" +
             "Main Topic: %s\n" +
             "Section/Chapter: %s\n" +
             "Subtopic: %s\n\n" +
             "Guidelines:\n" +
-            "- Structure your response with a clear summary, key points, and coding examples/use cases where appropriate.\n" +
-            "- Use clean Markdown (such as headers, lists, code snippets, and bold text) for formatting.\n" +
+            "- Structure your response with a clear summary and key points.\n" +
+            "- CRITICAL INSTRUCTION: ONLY include coding examples or pseudo-code if the topic is inherently technical or programming-related. Do NOT provide code examples for non-technical topics (e.g., yoga, soft skills, general wellness).\n" +
+            "- Use clean Markdown (such as headers, lists, code snippets if technical, and bold text) for formatting.\n" +
             "- Keep the tone professional, educational, and engaging.",
             syllabus.getTopic(), topic, subtopic
         );
