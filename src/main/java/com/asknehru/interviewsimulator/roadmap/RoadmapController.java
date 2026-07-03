@@ -1,5 +1,8 @@
 package com.asknehru.interviewsimulator.roadmap;
 
+import com.asknehru.roadmap.model.Roadmap;
+import com.asknehru.roadmap.model.RoadmapChapter;
+import com.asknehru.roadmap.model.RoadmapSubtopic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

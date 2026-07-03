@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-@Service
+@Service("simulatorLlmService")
 @RequiredArgsConstructor
 @Slf4j
 public class LlmService {

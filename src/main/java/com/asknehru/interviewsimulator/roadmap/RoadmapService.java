@@ -1,5 +1,8 @@
 package com.asknehru.interviewsimulator.roadmap;
 
+import com.asknehru.roadmap.model.Roadmap;
+import com.asknehru.roadmap.model.RoadmapChapter;
+import com.asknehru.roadmap.model.RoadmapSubtopic;
 import com.asknehru.interviewsimulator.ai.LlmService;
 import com.asknehru.interviewsimulator.syllabus.Syllabus;
 import com.asknehru.interviewsimulator.syllabus.SyllabusRepository;
@@ -13,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Service("simulatorRoadmapService")
 @RequiredArgsConstructor
 @Slf4j
 public class RoadmapService {
