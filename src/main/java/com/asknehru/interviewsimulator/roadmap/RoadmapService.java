@@ -89,18 +89,20 @@ public class RoadmapService {
         }
 
         String mainTopic = subtopic.getChapter().getRoadmap().getMainTopic();
+        String chapterName = subtopic.getChapter().getChapterName();
         String subtopicName = subtopic.getSubtopicName();
 
         String prompt = String.format(
             "You are an expert instructor.\n" +
             "Topic: %s\n" +
+            "Section/Chapter: %s\n" +
             "Subtopic: %s\n\n" +
-            "Please provide a comprehensive, detailed explanation of this subtopic in the context of the main topic. " +
+            "Please provide a comprehensive, detailed explanation of this subtopic in the context of the specific section/chapter and main topic. " +
             "Use Markdown formatting and explain it clearly. " +
-            "CRITICAL INSTRUCTION: ONLY provide code examples or pseudo-code if the topic is inherently technical or programming-related. " +
+            "CRITICAL INSTRUCTION: ONLY provide code examples if the topic is inherently technical or programming-related. " +
             "Do NOT provide code examples for non-technical topics (e.g., yoga, history, soft skills, general wellness). " +
-            "If providing code examples for technical topics, prefer using Java and Spring Boot unless the topic specifically requires another language.",
-            mainTopic, subtopicName
+            "If providing code examples for technical topics, you MUST ONLY use Java (along with Spring Boot if applicable). Do NOT use any other programming language (such as Python, JavaScript, C++, etc.).",
+            mainTopic, chapterName, subtopicName
         );
         String explanation = llmService.generate(prompt);
         subtopic.setExplanation(explanation);

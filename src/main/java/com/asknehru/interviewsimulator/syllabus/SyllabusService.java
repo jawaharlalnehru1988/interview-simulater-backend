@@ -173,7 +173,8 @@ public class SyllabusService {
             "Subtopic: %s\n\n" +
             "Guidelines:\n" +
             "- Structure your response with a clear summary and key points.\n" +
-            "- CRITICAL INSTRUCTION: ONLY include coding examples or pseudo-code if the topic is inherently technical or programming-related. Do NOT provide code examples for non-technical topics (e.g., yoga, soft skills, general wellness).\n" +
+            "- CRITICAL INSTRUCTION: ONLY include coding examples if the topic is inherently technical or programming-related. Do NOT provide code examples for non-technical topics (e.g., yoga, soft skills, general wellness).\n" +
+            "- If providing coding examples for technical topics, you MUST ONLY use Java (along with Spring Boot if applicable). Do NOT use any other programming language (such as Python, JavaScript, C++, etc.).\n" +
             "- Use clean Markdown (such as headers, lists, code snippets if technical, and bold text) for formatting.\n" +
             "- Keep the tone professional, educational, and engaging.",
             syllabus.getTopic(), topic, subtopic
