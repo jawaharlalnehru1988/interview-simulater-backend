@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/interview/**", "/api/chat/**", "/api/repository/**")
+                .securityMatcher("/api/interview/**", "/api/chat/**", "/api/repository/**", "/api/public/roadmaps/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(simulatorCorsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth

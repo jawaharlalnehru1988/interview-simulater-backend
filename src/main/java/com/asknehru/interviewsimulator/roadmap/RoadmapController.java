@@ -51,6 +51,8 @@ public class RoadmapController {
             map.put("id", r.getId());
             map.put("mainTopic", r.getMainTopic());
             map.put("routerLink", r.getRouterLink());
+            map.put("category", r.getCategory());
+            map.put("displayOrder", r.getDisplayOrder());
             map.put("createdAt", r.getCreatedAt().toString());
             return map;
         }).collect(Collectors.toList());
@@ -87,6 +89,8 @@ public class RoadmapController {
         map.put("id", roadmap.getId());
         map.put("mainTopic", roadmap.getMainTopic());
         map.put("routerLink", roadmap.getRouterLink());
+        map.put("category", roadmap.getCategory());
+        map.put("displayOrder", roadmap.getDisplayOrder());
         map.put("createdAt", roadmap.getCreatedAt() != null ? roadmap.getCreatedAt().toString() : null);
         map.put("updatedAt", roadmap.getUpdatedAt() != null ? roadmap.getUpdatedAt().toString() : null);
 

@@ -92,17 +92,26 @@ public class RoadmapService {
         String chapterName = subtopic.getChapter().getChapterName();
         String subtopicName = subtopic.getSubtopicName();
 
+        String category = subtopic.getChapter().getRoadmap().getCategory();
+        String promptInstruction;
+        if ("TECHNICAL".equalsIgnoreCase(category)) {
+            promptInstruction = "Please provide a comprehensive, detailed explanation of this subtopic in the context of the specific section/chapter and main topic. " +
+                                "Use Markdown formatting and explain it clearly. " +
+                                "Include code snippets and code examples where relevant. " +
+                                "CRITICAL INSTRUCTION: If providing code examples, you MUST ONLY use Java (along with Spring Boot if applicable). Do NOT use any other programming language (such as Python, JavaScript, C++, etc.).";
+        } else {
+            promptInstruction = "Please provide a comprehensive, detailed explanation of this subtopic in the context of the specific section/chapter and main topic. " +
+                                "Use Markdown formatting and explain it clearly. " +
+                                "CRITICAL INSTRUCTION: Since this is a non-technical/common topic, you MUST NOT include any programming code snippets, programming code examples, or software coding explanations.";
+        }
+
         String prompt = String.format(
             "You are an expert instructor.\n" +
             "Topic: %s\n" +
             "Section/Chapter: %s\n" +
             "Subtopic: %s\n\n" +
-            "Please provide a comprehensive, detailed explanation of this subtopic in the context of the specific section/chapter and main topic. " +
-            "Use Markdown formatting and explain it clearly. " +
-            "CRITICAL INSTRUCTION: ONLY provide code examples if the topic is inherently technical or programming-related. " +
-            "Do NOT provide code examples for non-technical topics (e.g., yoga, history, soft skills, general wellness). " +
-            "If providing code examples for technical topics, you MUST ONLY use Java (along with Spring Boot if applicable). Do NOT use any other programming language (such as Python, JavaScript, C++, etc.).",
-            mainTopic, chapterName, subtopicName
+            "%s",
+            mainTopic, chapterName, subtopicName, promptInstruction
         );
         String explanation = llmService.generate(prompt);
         subtopic.setExplanation(explanation);
@@ -141,6 +150,8 @@ public class RoadmapService {
             payload.put("mainTopic", roadmap.getMainTopic());
             payload.put("routerLink", roadmap.getRouterLink());
             payload.put("intro", "Curated learning path exported from Interview Trainer.");
+            payload.put("category", roadmap.getCategory());
+            payload.put("displayOrder", roadmap.getDisplayOrder());
             payload.put("chapters", chaptersList);
 
             String jsonPayload = objectMapper.writeValueAsString(payload);
