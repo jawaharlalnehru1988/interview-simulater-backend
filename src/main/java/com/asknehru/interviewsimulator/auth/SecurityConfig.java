@@ -28,11 +28,34 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/interview/**", "/api/chat/**", "/api/repository/**", "/api/public/roadmaps/**")
+                .securityMatcher(
+                        "/api/interview/**",
+                        "/api/documents/**",
+                        "/api/resume/**",
+                        "/api/roadmap/**",
+                        "/api/aspiration/**",
+                        "/api/coding/**",
+                        "/api/mcq/**",
+                        "/api/candidate/**",
+                        "/api/job-description/**",
+                        "/api/hr-voice/**",
+                        "/api/chat/**",
+                        "/api/repository/**",
+                        "/health/**",
+                        "/error"
+                )
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(simulatorCorsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/interview/auth/register/", "/health/", "/error", "/api/chat/**", "/api/interview/syllabus/public/**", "/api/public/roadmaps/**", "/api/repository/**").permitAll()
+                        .requestMatchers(
+                                "/api/interview/auth/register/",
+                                "/health/**",
+                                "/error",
+                                "/api/chat/**",
+                                "/api/interview/syllabus/public/**",
+                                "/api/public/roadmaps/**",
+                                "/api/repository/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

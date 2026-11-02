@@ -56,9 +56,11 @@ public class DocumentController {
         String uname = user.getUsername() != null ? user.getUsername().toLowerCase().trim() : "";
         return email.equals("nehru00123@gmail.com")
                 || email.equals("jawaharlalnehruelumalai@gmail.com")
+                || email.equals("soundaryasouu@gmail.com")
                 || uname.equals("narasimha")
                 || uname.equals("nehru00123@gmail.com")
                 || uname.equals("jawaharlalnehruelumalai@gmail.com")
+                || uname.equals("soundaryasouu@gmail.com")
                 || user.isSuperuser()
                 || user.isStaff();
     }
@@ -139,6 +141,7 @@ public class DocumentController {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     @GetMapping("/")
     public ResponseEntity<?> list() {
         User user = getCurrentUser();

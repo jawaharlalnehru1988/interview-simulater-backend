@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DocumentRepository extends JpaRepository<Document, Long> {
     List<Document> findByUserOrderByCreatedAtDesc(User user);
+    List<Document> findAllByOrderByCreatedAtDesc();
 }

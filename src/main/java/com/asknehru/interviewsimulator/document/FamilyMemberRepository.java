@@ -11,3 +11,4 @@ public interface FamilyMemberRepository extends JpaRepository<FamilyMember, Long
     Optional<FamilyMember> findByNameAndUser(String name, User user);
     boolean existsByNameAndUser(String name, User user);
 }
+

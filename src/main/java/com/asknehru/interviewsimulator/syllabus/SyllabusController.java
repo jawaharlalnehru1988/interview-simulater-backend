@@ -53,7 +53,8 @@ public class SyllabusController {
     @PostMapping("/generate/")
     public ResponseEntity<?> generate(@RequestBody Map<String, Object> request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow();
+        System.err.println("DEBUG: SecurityContext username is: [" + username + "]");
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found for username: " + username));
 
         String topic = (String) request.get("topic");
         String description = (String) request.get("description");

@@ -94,7 +94,7 @@ public class RoadmapService {
 
         String category = subtopic.getChapter().getRoadmap().getCategory();
         String promptInstruction;
-        if ("TECHNICAL".equalsIgnoreCase(category)) {
+        if ("TECHNICAL".equalsIgnoreCase(category) || "DSA".equalsIgnoreCase(category)) {
             promptInstruction = "Please provide a comprehensive, detailed explanation of this subtopic in the context of the specific section/chapter and main topic. " +
                                 "Use Markdown formatting and explain it clearly. " +
                                 "Include code snippets and code examples where relevant. " +
@@ -126,7 +126,7 @@ public class RoadmapService {
 
         String targetUrl;
         if ("asknehru".equalsIgnoreCase(domain)) {
-            targetUrl = "http://localhost:8083/api/roadmaps/import-syllabus/push-roadmap";
+            targetUrl = "http://127.0.0.1:8085/api/roadmaps/import-syllabus/push-roadmap";
         } else if ("askharekrishna".equalsIgnoreCase(domain)) {
             targetUrl = "http://localhost:8001/api/course-roadmap/import-syllabus/push-roadmap";
         } else {
@@ -179,8 +179,14 @@ public class RoadmapService {
             }
 
         } catch (Exception e) {
-            log.error("Failed to export roadmap: {}", e.getMessage());
-            throw new RuntimeException("Export failed: " + e.getMessage());
+            log.error("Failed to export roadmap", e);
+            String errorMsg = e.getMessage();
+            if (e.getCause() instanceof java.net.ConnectException || e instanceof java.net.ConnectException) {
+                errorMsg = "Connection refused by the target server. Is the destination service running?";
+            } else if (errorMsg == null) {
+                errorMsg = e.getClass().getSimpleName();
+            }
+            throw new RuntimeException("Export failed: " + errorMsg);
         }
     }
 }

@@ -42,7 +42,7 @@ public class Document {
     private DocumentType documentType = DocumentType.OTHER;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private DocumentCategory category;
 
